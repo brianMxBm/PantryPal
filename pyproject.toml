@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "site"
+version = "0.1.0"
+description = "Web app that takes ingredients and returns recipes."
+authors = ["COMP-380-6 <85262772+1101011@users.noreply.github.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+flask = "~2.0.1"
+flask-cdn = "=1.5.3"
+gunicorn = "~20.1"
+python = "~3.9"
+
+[tool.poetry.dev-dependencies]
+black = "=21.5b2"
+coverage = "~= 5.5"
+pre-commit = "~2.13.0"
+pytest = "~6.2"
+pytest-flask = "~1.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 100
+target-version = ['py39']
