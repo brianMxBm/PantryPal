@@ -14,6 +14,8 @@ jobs:
             PIP_NO_CACHE_DIR: false
             PIP_USER: 1
 
+            POETRY_VIRTUALENVS_CREATE: false
+
             PYTHONUSERBASE: ${{ github.workspace }}/.cache/py-user-base
             PRE_COMMIT_HOME: ${{ github.workspace }}/.cache/pre-commit-cache
 
