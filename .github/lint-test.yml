@@ -61,7 +61,7 @@ jobs:
               run: export PIP_USER=0; SKIP=black pre-commit run --all-files
 
             - name: Run black
-              run: black --check --diff
+              run: black --check --diff .
 
             - name: Run tests and coverage
               run: |
