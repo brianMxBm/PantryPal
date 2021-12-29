@@ -10,3 +10,5 @@ services:
         init: true
         environment:
             FLASK_ENV: development
+        volumes:
+            - .:/recipes:ro
