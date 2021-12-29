@@ -15,11 +15,12 @@ cdn = CDN()
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_pyfile("config.py", silent=True)
-    app.wsgi_app = WhiteNoise(
-        app.wsgi_app, root="web/static/", prefix="static/")
+    app.config.from_pyfile("config.py")
+    app.config.from_envvar("SPOONACULAR_KEY")
 
     # Serving through CDN is auto-disabled when in debug mode.
+    app.wsgi_app = WhiteNoise(
+        app.wsgi_app, root="web/static/", prefix="static/")
     cdn.init_app(app)
 
     # Important to import views after the app is created.
