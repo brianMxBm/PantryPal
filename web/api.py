@@ -16,7 +16,11 @@ def spoonacular_get(endpoint, params):
     """Perform an authenticated GET request with `params` to the Spoonacular API `endpoint`."""
     authed_params = {"apiKey": app.config["SPOONACULAR_KEY"]} | params
 
-    return session.get(f"https://api.spoonacular.com/{endpoint}", params=authed_params)
+    response = session.get(
+        f"https://api.spoonacular.com/{endpoint}", params=authed_params)
+    response.raise_for_status()
+
+    return response
 
 
 @bp.errorhandler(HTTPException)
@@ -38,6 +42,16 @@ def handle_exception(error: HTTPException):
     response.content_type = "application/json"
 
     return response
+
+
+@bp.errorhandler(requests.HTTPError)
+def handle_requests_exception(error: requests.HTTPError):
+    """Forward the response from Spoonacular."""
+    return flask.Response(
+        response=error.response.content,
+        status=error.response.status_code,
+        content_type=error.response.headers["content-type"],
+    )
 
 
 @bp.route("/search")
