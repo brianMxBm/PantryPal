@@ -21,10 +21,9 @@ def create_app():
     app.config.from_pyfile("config.py")
 
     try:
-        # Key found in ENV
         app.config["SPOONACULAR_KEY"] = os.environ["SPOONACULAR_KEY"]
     except KeyError:
-        app.config["SPOONACULAR_KEY"] = None  # Key not found in ENV
+        app.config["SPOONACULAR_KEY"] = None
         warnings.warn("A Spoonacular API key was not provided!")
 
     # Serving through CDN is auto-disabled when in debug mode.
@@ -33,8 +32,11 @@ def create_app():
     cdn.init_app(app)
 
     # Important to import views after the app is created.
-    from web import recipes
+    from web import api, recipes
 
+    api.limiter.init_app(app)
+
+    app.register_blueprint(api.bp, url_prefix="/api")
     app.register_blueprint(recipes.bp)
     app.add_url_rule("/", endpoint="index")
 
