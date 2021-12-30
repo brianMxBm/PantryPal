@@ -37,3 +37,10 @@ def search_api():
 
     response = spoonacular_get("recipes/complexSearch", request.args)
     return response.json()
+
+
+@bp.route("/ingredients")
+@limiter.limit("15/minute")
+def ingredient_api():
+    response = spoonacular_get("recipes/parseIngredients", request.args)
+    return response.json()
