@@ -55,7 +55,7 @@ def handle_requests_exception(error: requests.HTTPError):
 
 
 @bp.route("/search")
-@limiter.limit("1/minute")
+@limiter.limit("1/minute", deduct_when=lambda r: r.status_code == 200)
 def search_api():
     # Disallow these to conserve the request quota.
     for arg in ("fillIngredients", "addRecipeNutrition"):
@@ -67,7 +67,7 @@ def search_api():
 
 
 @bp.route("/ingredients")
-@limiter.limit("15/minute")
+@limiter.limit("15/minute", deduct_when=lambda r: r.status_code == 200)
 def ingredient_api():
     response = spoonacular_get("recipes/parseIngredients", request.args)
     return response.json()
