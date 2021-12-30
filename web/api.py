@@ -57,6 +57,3 @@ def search_api():
 def ingredient_api():
     response = spoonacular_get("recipes/parseIngredients", request.args)
     return response.json()
-
-
-© 2021 GitHub, Inc.
