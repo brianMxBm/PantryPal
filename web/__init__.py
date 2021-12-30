@@ -1,3 +1,6 @@
+import os
+import warnings
+
 from flask import Flask
 from flask_cdn import CDN
 from whitenoise import WhiteNoise
@@ -16,7 +19,13 @@ cdn = CDN()
 def create_app():
     app = Flask(__name__)
     app.config.from_pyfile("config.py")
-    app.config.from_envvar("SPOONACULAR_KEY")
+
+    try:
+        # Key found in ENV
+        app.config["SPOONACULAR_KEY"] = os.environ["SPOONACULAR_KEY"]
+    except KeyError:
+        app.config["SPOONACULAR_KEY"] = None  # Key not found in ENV
+        warnings.warn("A Spoonacular API key was not provided!")
 
     # Serving through CDN is auto-disabled when in debug mode.
     app.wsgi_app = WhiteNoise(
