@@ -19,6 +19,8 @@ limits = "^2.1.0"
 idna = "^3.3"
 chardet = "^4.0.0"
 certifi = "^2021.10.8"
+requests-mock = "^1.9.3"
+pytest-mock = "^3.6.1"
 
 [tool.poetry.dev-dependencies]
 black = "=21.5b2"
