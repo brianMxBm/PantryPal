@@ -83,3 +83,21 @@ def test_search_disabled_params(client, requests_mock, param, value, expected_st
     res = client.get(flask.url_for("api.search_api", **{param: value}))
 
     assert res.status_code == expected_status
+
+
+@pytest.mark.parametrize(
+    "endpoint,spoonacular_endpoint,limit",
+    ((*ENDPOINT_MAP[0], 1), (*ENDPOINT_MAP[1], 15)),
+)
+def test_rate_limits(client, requests_mock, endpoint, spoonacular_endpoint, limit):
+    """Endpoints should be rate limited."""
+    requests_mock.get(SPOONACULAR_BASE + spoonacular_endpoint, json={})
+
+    for _ in range(limit):
+        # A new context is needed to clear flask.g because flask-limiter stores state there.
+        with client.application.app_context():
+            res = client.get(flask.url_for(endpoint))
+            assert res.status_code == 200
+
+    res = client.get(flask.url_for(endpoint))
+    assert res.status_code == 429
