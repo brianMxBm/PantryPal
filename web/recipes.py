@@ -1,7 +1,6 @@
 import flask
 from flask import render_template
 
-
 bp = flask.Blueprint("recipes", __name__)
 
 

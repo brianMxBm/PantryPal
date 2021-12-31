@@ -2,7 +2,8 @@ import json
 
 import flask
 import requests
-from flask import current_app as app, request
+from flask import current_app as app
+from flask import request
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from werkzeug.exceptions import HTTPException
@@ -16,8 +17,7 @@ def spoonacular_get(endpoint, params):
     """Perform an authenticated GET request with `params` to the Spoonacular API `endpoint`."""
     authed_params = {"apiKey": app.config["SPOONACULAR_KEY"]} | params
 
-    response = session.get(
-        f"https://api.spoonacular.com/{endpoint}", params=authed_params)
+    response = session.get(f"https://api.spoonacular.com/{endpoint}", params=authed_params)
     response.raise_for_status()
 
     return response
