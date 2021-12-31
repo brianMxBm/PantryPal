@@ -1,0 +1,69 @@
+<form class="px-4">
+    <div class="mb-3">
+        <label for="sort" class="form-label">Sort by</label>
+        <select id="sort" class="form-select">
+            <option value="healthiness">Healthiness</option>
+            <option value="min-missing-ingredients" selected>Fewest missing ingredients</option>
+            <option value="popularity">Popularity</option>
+            <option value="price">Price</option>
+            <option value="random">Random</option>
+            <option value="time">Time until ready</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="filter-type" class="form-label">Meal type</label>
+        <select id="filter-type" class="form-select">
+            <option value="" selected>Any</option>
+            <option value="appetizer">Appetizer</option>
+            <option value="beverage">Beverage</option>
+            <option value="bread">Bread</option>
+            <option value="breakfast">Breakfast</option>
+            <option value="dessert">Dessert</option>
+            <option value="drink">Drink</option>
+            <option value="fingerfood">Finger food</option>
+            <option value="main course">Main course</option>
+            <option value="marinade">Marinade</option>
+            <option value="salad">Salad</option>
+            <option value="sauce">Sauce</option>
+            <option value="side dish">Side dish</option>
+            <option value="snack">Snack</option>
+            <option value="soup">Soup</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="filter-cuisine" class="form-label">Cuisine</label>
+        <select id="filter-cuisine" class="form-select">
+            <option value="" selected>Any</option>
+            <option value="African">African</option>
+            <option value="American">American</option>
+            <option value="British">British</option>
+            <option value="Cajun">Cajun</option>
+            <option value="Caribbean">Caribbean</option>
+            <option value="Chinese">Chinese</option>
+            <option value="Eastern European">Eastern European</option>
+            <option value="European">European</option>
+            <option value="French">French</option>
+            <option value="German">German</option>
+            <option value="Greek">Greek</option>
+            <option value="Indian">Indian</option>
+            <option value="Irish">Irish</option>
+            <option value="Italian">Italian</option>
+            <option value="Japanese">Japanese</option>
+            <option value="Jewish">Jewish</option>
+            <option value="Korean">Korean</option>
+            <option value="Latin American">Latin American</option>
+            <option value="Mediterranean">Mediterranean</option>
+            <option value="Mexican">Mexican</option>
+            <option value="Middle Eastern">Middle Eastern</option>
+            <option value="Nordic">Nordic</option>
+            <option value="Southern">Southern</option>
+            <option value="Spanish">Spanish</option>
+            <option value="Thai">Thai</option>
+            <option value="Vietnamese">Vietnamese</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="filter-time" class="form-label">Maximum minutes until ready</label>
+        <input id="filter-time" class="form-control" type="number" value="20">
+    </div>
+</form>

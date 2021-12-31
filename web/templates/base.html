@@ -22,10 +22,12 @@
     {% block head %}{% endblock %}
 </head>
 <body>
-    <main>
-        {% block content %}
-            {{ block.super }}
-        {% endblock %}
-    </main>
+    <div class="container">
+        <main>
+            {% block content %}
+                {{ block.super }}
+            {% endblock %}
+        </main>
+    </div>
 </body>
 </html>

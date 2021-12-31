@@ -1,5 +1,45 @@
 {% extends 'base.html' %}
 
+{% block head %}
+    <script src="https://kit.fontawesome.com/b1aae60ff6.js" crossorigin="anonymous"></script>
+{% endblock %}
+
 {% block content %}
-    <p>Hello, world!</p>
+    <div class="py-5 text-center">
+        <h2>Search for Recipes</h2>
+        <p class="lead">
+            Enter ingredients below, then press search to find recipes containing those ingredients!
+        </p>
+    </div>
+    <div class="row justify-content-center pb-5">
+        <div class="col-md-8">
+            <div class="input-group input-group-lg">
+                <input class="form-control" type="search" placeholder="Add an ingredient"
+                       aria-describedby="button-add-ingredient">
+                <button id="button-add-ingredient" class="btn btn-lg btn-primary" type="button">
+                    <i class="fas fa-plus" aria-hidden="true"></i>
+                    <span class="visually-hidden">Add Ingredient</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-center">
+            <div class="btn-group dropdown" role="group">
+                <button id="button-add-ingredient" class="btn btn-lg btn-primary px-5"
+                        type="button">
+                    <i class="fas fa-search px-1" aria-hidden="true"></i>
+                    Search for Recsssipes
+                </button>
+                <button class="btn btn-lg btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                        type="button" data-bs-toggle="dropdown" data-bs-reference="parent"
+                        aria-expanded="false">
+                    <span class="visually-hidden">Toggle Search Options Dropdown</span>
+                </button>
+                <div class="dropdown-menu pb-0 w-100">
+                    {% include 'recipes/search_options.html' %}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
