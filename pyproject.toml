@@ -37,3 +37,6 @@ line_length = 100
 profile = "black"
 skip_gitignore = true
 src_paths = ["tests", "web"]
+
+[tool.pytest.ini_options]
+requests_mock_case_sensitive = true
