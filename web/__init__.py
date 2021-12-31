@@ -27,14 +27,14 @@ def create_app():
         warnings.warn("A Spoonacular API key was not provided!")
 
     # Serving through CDN is auto-disabled when in debug mode.
-    app.wsgi_app = WhiteNoise(
-        app.wsgi_app, root="web/static/", prefix="static/")
+    app.wsgi_app = WhiteNoise(app.wsgi_app, root="web/static/", prefix="static/")
     cdn.init_app(app)
 
     # Important to import views after the app is created.
     from web import api, recipes
 
     api.limiter.init_app(app)
+    api.session.params = {"apiKey": app.config["SPOONACULAR_KEY"]}
 
     app.register_blueprint(api.bp, url_prefix="/api")
     app.register_blueprint(recipes.bp)

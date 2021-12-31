@@ -2,25 +2,18 @@ import json
 
 import flask
 import requests
-from flask import current_app as app
 from flask import request
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from werkzeug.exceptions import HTTPException
 
+SPOONACULAR_BASE = "https://api.spoonacular.com/recipes/"
+
 bp = flask.Blueprint("api", __name__)
 limiter = Limiter(key_func=get_remote_address)
+
 session = requests.Session()
-
-
-def spoonacular_get(endpoint, params):
-    """Perform an authenticated GET request with `params` to the Spoonacular API `endpoint`."""
-    authed_params = {"apiKey": app.config["SPOONACULAR_KEY"]} | params
-
-    response = session.get(f"https://api.spoonacular.com/{endpoint}", params=authed_params)
-    response.raise_for_status()
-
-    return response
+session.hooks = {"response": lambda response, *args, **kwargs: response.raise_for_status()}
 
 
 @bp.errorhandler(HTTPException)
@@ -62,12 +55,12 @@ def search_api():
         if request.args.get(arg) == "true":
             flask.abort(403, description=f"{arg} is disabled.")
 
-    response = spoonacular_get("recipes/complexSearch", request.args)
+    response = session.get(f"{SPOONACULAR_BASE}complexSearch", params=request.args)
     return response.json()
 
 
-@bp.route("/ingredients")
+@bp.route("/ingredients", methods=["POST"])
 @limiter.limit("15/minute", deduct_when=lambda r: r.status_code == 200)
 def ingredient_api():
-    response = spoonacular_get("recipes/parseIngredients", request.args)
+    response = session.post(f"{SPOONACULAR_BASE}parseIngredients", data=request.form)
     return response.json()
