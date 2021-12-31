@@ -56,11 +56,11 @@ def search_api():
             flask.abort(403, description=f"{arg} is disabled.")
 
     response = session.get(f"{SPOONACULAR_BASE}complexSearch", params=request.args)
-    return response.json()
+    return response.text, 200, {"content-type": "application/json"}
 
 
 @bp.route("/ingredients", methods=["POST"])
 @limiter.limit("15/minute", deduct_when=lambda r: r.status_code == 200)
 def ingredient_api():
     response = session.post(f"{SPOONACULAR_BASE}parseIngredients", data=request.form)
-    return response.json()
+    return response.text, 200, {"content-type": "application/json"}
