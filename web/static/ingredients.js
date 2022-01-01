@@ -38,7 +38,7 @@ function createIngredient(info) {
     const clone = template.cloneNode(true);
     clone.id = `ingredient-${info.name}`;
     clone.firstElementChild.textContent = `${info.name}, ${info.amount} ${info.unitShort}`;
-    template.after(clone);
+    template.parentNode.appendChild(clone);
 
     // Initialise the tooltip for the new element. Display the ingredient's image on hover.
     const title = `<img src="https://spoonacular.com/cdn/ingredients_100x100/${info.image}">`;
@@ -88,7 +88,27 @@ async function search() {
     const response = await fetch(url);
     const results = await response.json();
 
-    displayRecipes(results);
+    for (const result of results.results) {
+        displayRecipes(result);
+    }
 }
 
-function displayRecipes(recipes) {}
+function displayRecipes(recipe) {
+    const template = document.getElementById("recipe-template");
+    const clone = template.cloneNode(true);
+
+    clone.id = `recipe-${recipe.id}`;
+    clone.querySelector(".recipe-name").textContent = recipe.title;
+    clone.querySelector(".recipe-img").src = recipe.image;
+    clone.querySelector(".recipe-healthiness").textContent = recipe.healthScore;
+
+    clone.querySelector(
+        ".recipe-time"
+    ).textContent = `${recipe.readyInMinutes} m`;
+
+    clone.querySelector(".recipe-price").textContent = (
+        recipe.pricePerServing / 100
+    ).toFixed(2);
+
+    template.parentNode.appendChild(clone);
+}
