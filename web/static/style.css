@@ -65,6 +65,7 @@ here by 4 rather than by 2.
     opacity: 1;
 }
 
-#ingredient-template {
+#ingredient-template,
+#recipe-template {
     display: none;
 }

@@ -33,7 +33,7 @@
                     onclick="deleteIngredient(this)"></button>
         </div>
     </div>
-    <div class="row">
+    <div class="row pb-5">
         <div class="col text-center">
             <div class="btn-group dropdown" role="group">
                 <button id="button-add-ingredient" class="btn btn-lg btn-primary px-5"
@@ -48,6 +48,26 @@
                 </button>
                 <div class="dropdown-menu pb-0 w-100">
                     {% include 'recipes/search_options.html' %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row row-cols-4 gx-5 gy-4 pb-5 justify-content-start">
+        <div id="recipe-template" class="col">
+            <h2 class="text-center recipe-name"></h2>
+            <img class="img-fluid recipe-img" src="">
+            <div class="row rows-cols-3 gx-2 mt-2">
+                <div class="col">
+                    <i class="fas fa-dollar-sign" aria-hidden="true"></i>
+                    <span class="recipe-price"></span>
+                </div>
+                <div class="col">
+                    <i class="fas fa-clock" aria-hidden="true"></i>
+                    <span class="recipe-time"></span>
+                </div>
+                <div class="col">
+                    <i class="fas fa-heartbeat" aria-hidden="true"></i>
+                    <span class="recipe-healthiness"></span>
                 </div>
             </div>
         </div>
