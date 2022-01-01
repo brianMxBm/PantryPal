@@ -1,14 +1,14 @@
-/* By default, it's inline. However, Bootstrap displays normal controls as blocks.*/
+/* By default, it's inline. However, Bootstrap displays normal controls as blocks. */
 .bootstrap-select {
     display: block !important;
     width: 100% !important;
 }
 
-/* Hide the caret since form-select has its own.*/
+/* Hide the caret since form-select has its own. */
 .form-select.dropdown-toggle::after {
     display: none !important;
 }
 
-.container{
+.container {
     max-width: 960px;
 }
