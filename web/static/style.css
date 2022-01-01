@@ -44,6 +44,27 @@ here by 4 rather than by 2.
     background-size: 0.75rem; /* Make its size closer to the size of the text. */
 }
 
+/* Colour the tooltip's arrow the same as inner's border */
+.ingredient-tooltip.bs-tooltip-top .tooltip-arrow::before {
+    border-top-color: #dee2e6;
+}
+
+.ingredient-tooltip.bs-tooltip-bottom .tooltip-arrow::before {
+    border-bottom-color: #dee2e6;
+}
+
+.ingredient-tooltip.bs-tooltip-start .tooltip-arrow::before {
+    border-left-color: #dee2e6;
+}
+
+.ingredient-tooltip.bs-tooltip-end .tooltip-arrow::before {
+    border-right-color: #dee2e6;
+}
+
+.ingredient-tooltip.show {
+    opacity: 1;
+}
+
 #ingredient-template {
     display: none;
 }
