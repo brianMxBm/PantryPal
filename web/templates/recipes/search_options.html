@@ -1,5 +1,10 @@
+<script>
+    $.fn.selectpicker.Constructor.DEFAULTS.dropupAuto = false;
+    $.fn.selectpicker.Constructor.DEFAULTS.style = "";
+    $.fn.selectpicker.Constructor.DEFAULTS.styleBase = "form-select";
+</script>
 <form class="px-4">
-    <div class="mb-3">
+    <div class="mb-4">
         <label for="sort" class="form-label">Sort by</label>
         <select id="sort" class="form-select">
             <option value="healthiness">Healthiness</option>
@@ -10,9 +15,9 @@
             <option value="time">Time until ready</option>
         </select>
     </div>
-    <div class="mb-3">
+    <div class="mb-4">
         <label for="filter-type" class="form-label">Meal type</label>
-        <select id="filter-type" class="form-select">
+        <select id="filter-type" class="selectpicker" data-live-search="true">
             <option value="" selected>Any</option>
             <option value="appetizer">Appetizer</option>
             <option value="beverage">Beverage</option>
@@ -30,10 +35,10 @@
             <option value="soup">Soup</option>
         </select>
     </div>
-    <div class="mb-3">
+    <div class="mb-4">
         <label for="filter-cuisine" class="form-label">Cuisine</label>
-        <select id="filter-cuisine" class="form-select">
-            <option value="" selected>Any</option>
+        <select id="filter-cuisine" class="selectpicker" multiple data-live-search="true"
+                data-none-selected-text="All">
             <option value="African">African</option>
             <option value="American">American</option>
             <option value="British">British</option>
