@@ -33,11 +33,11 @@
                     onclick="deleteIngredient(this)"></button>
         </div>
     </div>
-    <div class="row pb-5">
+    <div class="row pb-3">
         <div class="col text-center">
             <div class="btn-group dropdown" role="group">
                 <button id="button-add-ingredient" class="btn btn-lg btn-primary px-5"
-                        type="button">
+                        type="button" onclick="search()">
                     <i class="fas fa-search px-1" aria-hidden="true"></i>
                     Search for Recipes
                 </button>
@@ -53,7 +53,7 @@
         </div>
     </div>
     <div class="row row-cols-4 gx-5 gy-4 pb-5 justify-content-start">
-        <div id="recipe-template" class="col">
+        <div id="recipe-template" class="col recipe">
             <h2 class="text-center recipe-name"></h2>
             <img class="img-fluid recipe-img" src="">
             <div class="row rows-cols-3 gx-2 mt-2">

@@ -69,3 +69,7 @@ here by 4 rather than by 2.
 #recipe-template {
     display: none;
 }
+
+.recipe {
+    font-size: 0.95rem;
+}
