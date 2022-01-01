@@ -12,3 +12,38 @@
 .container {
     max-width: 960px;
 }
+
+/*
+Normally the gutter uses padding. However, a wrapper element for a col is avoided and the ingredient
+class is a direct child of the row. It needs its own padding, so margins have to be used. Changing
+the gutter width with gx-* would cause misalignment with adjacent rows. Instead, change divide it
+here by 4 rather than by 2.
+*/
+#ingredients > * {
+    margin-right: calc(var(--bs-gutter-x) / 4);
+    margin-left: calc(var(--bs-gutter-x) / 4);
+    margin-top: var(--bs-gutter-y);
+}
+
+/* The gutter on the edges needs to add up to the original width so it aligns with adjacent rows. */
+#ingredients {
+    padding-right: calc(var(--bs-gutter-x) / 4);
+    padding-left: calc(var(--bs-gutter-x) / 4);
+}
+
+.ingredient {
+    padding: 0.25rem 0.75rem;
+    align-items: center;
+    flex: 0 0 !important; /* Make the container the size of its content. */
+    white-space: nowrap; /* Ensure text is on a single line. */
+}
+
+.ingredient .btn-close {
+    padding: 0; /* Easier to reason about aligning it when the X directly touches the edges. */
+    margin-left: 0.5rem; /* Some space between the text and icon */
+    background-size: 0.75rem; /* Make its size closer to the size of the text. */
+}
+
+#ingredient-template {
+    display: none;
+}
