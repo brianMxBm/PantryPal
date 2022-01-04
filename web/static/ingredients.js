@@ -94,6 +94,7 @@ async function search() {
     const response = await fetch(url);
     const results = await response.json();
 
+    clearRecipes();
     for (const result of results.results) {
         displayRecipes(result);
     }
@@ -120,4 +121,9 @@ function displayRecipes(recipe) {
     ).toFixed(2);
 
     template.parentNode.appendChild(clone);
+}
+
+function clearRecipes() {
+    const template = document.getElementById("recipe-template");
+    template.parentElement.innerHTML = template.outerHTML;
 }
