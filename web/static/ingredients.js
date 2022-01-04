@@ -100,7 +100,10 @@ function displayRecipes(recipe) {
     clone.id = `recipe-${recipe.id}`;
     clone.querySelector(".recipe-name").textContent = recipe.title;
     clone.querySelector(".recipe-img").src = recipe.image;
-    clone.querySelector(".recipe-healthiness").textContent = recipe.healthScore;
+
+    clone.querySelector(
+        ".recipe-healthiness"
+    ).textContent = `${recipe.healthScore}%`;
 
     clone.querySelector(
         ".recipe-time"
