@@ -7,18 +7,16 @@ const toolTipOptions = {
         </div>`,
 };
 const ingredients = new Map();
-const ingredientTemplate = document.getElementById("ingredient-template");
+const ingredientInput = document.getElementById("ingredient-input");
 
 // eslint-disable-next-line no-unused-vars
 async function addIngredient() {
-    const input = document.getElementById("ingredient-input");
-
     // TODO: check the returned status code.
     // TODO: check for empty input.
     const response = await fetch("api/ingredients", {
         method: "POST",
         body: new URLSearchParams({
-            ingredientList: input.value,
+            ingredientList: ingredientInput.value,
         }),
     });
 
@@ -32,10 +30,10 @@ async function addIngredient() {
         createIngredient(info);
     }
 
-    input.value = ""; // Clear the input bar.
+    ingredientInput.value = ""; // Clear the input bar.
 }
 
-ingredientTemplate.addEventListener("keyup", async (e) => {
+ingredientInput.addEventListener("keyup", async (e) => {
     if (e.key === "Enter") {
         e.preventDefault();
         await addIngredient();
@@ -43,11 +41,13 @@ ingredientTemplate.addEventListener("keyup", async (e) => {
 });
 
 function createIngredient(info) {
+    const template = document.getElementById("ingredient-template");
+
     // Create an element for the new ingredient by cloning the template.
-    const clone = ingredientTemplate.cloneNode(true);
+    const clone = template.cloneNode(true);
     clone.id = `ingredient-${info.name}`;
     clone.firstElementChild.textContent = `${info.name}, ${info.amount} ${info.unitShort}`;
-    ingredientTemplate.parentNode.appendChild(clone);
+    template.parentNode.appendChild(clone);
 
     // Initialise the tooltip for the new element. Display the ingredient's image on hover.
     const title = `<img src="https://spoonacular.com/cdn/ingredients_100x100/${info.image}">`;
