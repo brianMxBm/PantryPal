@@ -26,6 +26,9 @@ def create_app():
         app.config["SPOONACULAR_KEY"] = None
         warnings.warn("A Spoonacular API key was not provided!")
 
+    if app.config.get("DEBUG"):
+        app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
+
     # Serving through CDN is auto-disabled when in debug mode.
     app.wsgi_app = WhiteNoise(app.wsgi_app, root="web/static/", prefix="static/")
     cdn.init_app(app)
