@@ -7,6 +7,7 @@ const toolTipOptions = {
         </div>`,
 };
 const ingredients = [];
+const ingredientTemplate = document.getElementById("ingredient-template");
 
 // eslint-disable-next-line no-unused-vars
 async function addIngredient() {
@@ -31,14 +32,19 @@ async function addIngredient() {
     input.value = ""; // Clear the input bar.
 }
 
-function createIngredient(info) {
-    const template = document.getElementById("ingredient-template");
+ingredientTemplate.addEventListener("keyup", async (e) => {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        await addIngredient();
+    }
+});
 
+function createIngredient(info) {
     // Create an element for the new ingredient by cloning the template.
-    const clone = template.cloneNode(true);
+    const clone = ingredientTemplate.cloneNode(true);
     clone.id = `ingredient-${info.name}`;
     clone.firstElementChild.textContent = `${info.name}, ${info.amount} ${info.unitShort}`;
-    template.parentNode.appendChild(clone);
+    ingredientTemplate.parentNode.appendChild(clone);
 
     // Initialise the tooltip for the new element. Display the ingredient's image on hover.
     const title = `<img src="https://spoonacular.com/cdn/ingredients_100x100/${info.image}">`;
