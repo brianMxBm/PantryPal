@@ -6,7 +6,7 @@ const toolTipOptions = {
             <div class="tooltip-inner border bg-light"></div>
         </div>`,
 };
-const ingredients = [];
+const ingredients = new Map();
 const ingredientTemplate = document.getElementById("ingredient-template");
 
 // eslint-disable-next-line no-unused-vars
@@ -25,10 +25,13 @@ async function addIngredient() {
     // The API returns a list because it parses each line of input.
     // However, ingredients come from the front end 1 by 1, so only use the first list item.
     const info = (await response.json())[0];
-    ingredients.push(info);
 
-    // TODO: check for duplicate inputs.
-    createIngredient(info);
+    // TODO: display a message when a duplicate is entered.
+    if (!ingredients.has(info.id)) {
+        ingredients.set(info.id, info);
+        createIngredient(info);
+    }
+
     input.value = ""; // Clear the input bar.
 }
 
@@ -79,7 +82,10 @@ async function search() {
 
     const url = new URL("api/search", window.location.href);
     const params = {
-        includeIngredients: ingredients.map((i) => i.name).join(","),
+        // This is not efficient, but it's fine for the small amounts of ingredients.
+        includeIngredients: Array.from(ingredients.values())
+            .map((i) => i.name)
+            .join(","),
         addRecipeInformation: "true",
         cuisine: cuisine.value,
         type: type.value,
