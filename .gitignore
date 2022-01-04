@@ -63,3 +63,6 @@ instance/
 
 # Mac OS .DS_Store, which is a file that stores custom attributes of its containing folder
 .DS_Store
+
+#Avoid rate limits, quota consumption, and the need to input ingredients by reading data from a file. Do not check in this file since its Spoonacular's data and the terms don't allow that.
+recipe_data.json
