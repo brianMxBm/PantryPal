@@ -18,8 +18,7 @@
         <div class="input-group input-group-lg">
             <input id="ingredient-input" class="form-control" type="search"
                    placeholder="Add an ingredient" aria-describedby="button-add-ingredient">
-            <button id="button-add-ingredient" class="btn btn-lg btn-primary" type="button"
-                    onclick="addIngredient()">
+            <button id="button-add-ingredient" class="btn btn-lg btn-primary" type="button">
                 <i class="fas fa-plus" aria-hidden="true"></i>
                 <span class="visually-hidden">Add Ingredient</span>
             </button>
@@ -28,15 +27,13 @@
     <div id="ingredients" class="row gy-2 pb-5">
         <div id="ingredient-template" class="ingredient btn-group bg-light border rounded-pill">
             <span></span>
-            <button type="button" class="btn-close" aria-label="Remove"
-                    onclick="deleteIngredient(this)"></button>
+            <button type="button" class="btn-close" aria-label="Remove"></button>
         </div>
     </div>
     <div class="row pb-3">
         <div class="col text-center">
             <div class="btn-group dropdown" role="group">
-                <button id="button-add-ingredient" class="btn btn-lg btn-primary px-5"
-                        type="button" onclick="search()">
+                <button id="button-search" class="btn btn-lg btn-primary px-5" type="button">
                     <i class="fas fa-search px-1" aria-hidden="true"></i>
                     Search for Recipes
                 </button>
@@ -85,5 +82,5 @@
             </div>
         </div>
     </div>
-    <script src="{{ url_for('static', filename='ingredients.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='main.js') }}"></script>
 {% endblock %}

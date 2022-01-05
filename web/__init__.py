@@ -1,3 +1,4 @@
+import mimetypes
 import os
 import warnings
 
@@ -14,6 +15,7 @@ except ImportError:
     pass
 
 cdn = CDN()
+mimetypes.add_type("application/javascript", ".js")  # Ensure JS modules use the right mimetype.
 
 
 def create_app():
