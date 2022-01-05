@@ -83,6 +83,7 @@ here by 4 rather than by 2.
     z-index: -1; /* Hide it by default. */
     user-select: none; /* Disable text selection since the element behind may be clickable */
     overflow: hidden;
+    pointer-events: none;
 
     /* Overlay it by using absolute positioning. */
     position: absolute;
@@ -96,4 +97,8 @@ here by 4 rather than by 2.
 
 .text-overlay-container:hover > .text-overlay {
     z-index: 1; /* Display it on hover. */
+}
+
+.recipe-img {
+    cursor: pointer;
 }

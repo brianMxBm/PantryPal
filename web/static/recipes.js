@@ -48,8 +48,8 @@ export class RecipeManager {
 
     showAll(recipes) {
         this.clear();
-        for (const result of recipes) {
-            this.show(result);
+        for (const recipe of recipes) {
+            this.show(recipe);
         }
     }
 
@@ -59,7 +59,9 @@ export class RecipeManager {
 
         clone.id = `recipe-${recipe.id}`;
         clone.querySelector(".recipe-name").textContent = recipe.title;
-        clone.querySelector(".recipe-img").src = recipe.image;
+
+        const image = clone.querySelector(".recipe-img");
+        image.src = recipe.image;
 
         clone.querySelector(
             ".recipe-healthiness"
@@ -73,7 +75,19 @@ export class RecipeManager {
             recipe.pricePerServing / 100
         ).toFixed(2);
 
+        const modal = clone.querySelector("#recipe-modal-template");
+        this.fillModal(modal, image, recipe);
+
         template.parentNode.appendChild(clone);
+    }
+
+    fillModal(modal, trigger, recipe) {
+        modal.id = `recipe-modal-${recipe.id}`;
+        modal.querySelector(".modal-title").textContent = recipe.title;
+        modal.querySelector(".recipe-summary").innerHTML = recipe.summary;
+        modal.querySelector(".recipe-modal-img").src = recipe.image;
+
+        trigger.setAttribute("data-bs-target", "#" + modal.id);
     }
 
     clear() {
