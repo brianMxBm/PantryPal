@@ -25,8 +25,9 @@ async function addIngredient() {
     const info = (await response.json())[0];
 
     // TODO: display a message when a duplicate is entered.
-    if (!ingredients.has(info.id)) {
-        ingredients.set(info.id, info);
+    // Store the ID as a string because it may later be read from an attribute as a string.
+    if (!ingredients.has(info.id.toString())) {
+        ingredients.set(info.id.toString(), info);
         createIngredient(info);
     }
 
@@ -45,7 +46,8 @@ function createIngredient(info) {
 
     // Create an element for the new ingredient by cloning the template.
     const clone = template.cloneNode(true);
-    clone.id = `ingredient-${info.name}`;
+    clone.id = `ingredient-${info.id}`;
+    clone.setAttribute("data-id", info.id); // Used to delete it from the map.
     clone.firstElementChild.textContent = `${info.name}, ${info.amount} ${info.unitShort}`;
     template.parentNode.appendChild(clone);
 
@@ -70,6 +72,7 @@ function createIngredient(info) {
 // eslint-disable-next-line no-unused-vars
 function deleteIngredient(ingredientButton) {
     bootstrap.Tooltip.getInstance(ingredientButton.parentNode).dispose();
+    ingredients.delete(ingredientButton.parentNode.getAttribute("data-id"));
     ingredientButton.parentNode.remove();
 }
 
