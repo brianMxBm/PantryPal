@@ -86,13 +86,28 @@ export class RecipeManager {
         modal.querySelector(".modal-title").textContent = recipe.title;
         modal.querySelector(".recipe-summary").innerHTML = recipe.summary;
         modal.querySelector(".recipe-modal-img").src = recipe.image;
+        this.fillInstructions(modal, recipe);
 
+        // Needed for Bootstrap to be able to toggle this modal.
         trigger.setAttribute("data-bs-target", "#" + modal.id);
 
+        // Set click events for pagination.
         for (const pageLink of modal.querySelectorAll(".page-link")) {
             pageLink.addEventListener("click", (e) =>
                 this.changeModalPage(e, modal)
             );
+        }
+    }
+
+    fillInstructions(modal, recipe) {
+        const orderedList = modal.querySelector(".recipe-instructions");
+
+        for (const instructions of recipe.analyzedInstructions) {
+            for (const step of instructions.steps) {
+                const listItem = document.createElement("li");
+                listItem.textContent = step.step;
+                orderedList.appendChild(listItem);
+            }
         }
     }
 
