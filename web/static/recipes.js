@@ -69,7 +69,7 @@ export class RecipeManager {
 
         clone.querySelector(
             ".recipe-time"
-        ).textContent = `${recipe.readyInMinutes} m`;
+        ).textContent = `${recipe.readyInMinutes}m`;
 
         clone.querySelector(".recipe-price").textContent = (
             recipe.pricePerServing / 100
