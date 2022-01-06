@@ -64,7 +64,7 @@
                 <div class="text-overlay p-2">
                     <h3 class="text-center recipe-name"></h3>
                 </div>
-                <img class="img-fluid recipe-img" src="">
+                <img class="img-fluid recipe-img" src="" data-bs-toggle="modal">
             </div>
             <div class="row rows-cols-3 gx-2 mt-2">
                 <div class="col">
@@ -80,6 +80,7 @@
                     <span class="recipe-healthiness" title="Healthiness score"></span>
                 </div>
             </div>
+            {% include 'recipes/recipe_modal.html' %}
         </div>
     </div>
     <script type="module" src="{{ url_for('static', filename='main.js') }}"></script>
