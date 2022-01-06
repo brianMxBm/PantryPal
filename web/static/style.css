@@ -99,6 +99,7 @@ here by 4 rather than by 2.
     z-index: 1; /* Display it on hover. */
 }
 
-.recipe-img {
+.recipe-img,
+.recipe .page-link {
     cursor: pointer;
 }

@@ -88,6 +88,33 @@ export class RecipeManager {
         modal.querySelector(".recipe-modal-img").src = recipe.image;
 
         trigger.setAttribute("data-bs-target", "#" + modal.id);
+
+        for (const pageLink of modal.querySelectorAll(".page-link")) {
+            pageLink.addEventListener("click", (e) =>
+                this.changeModalPage(e, modal)
+            );
+        }
+    }
+
+    changeModalPage(event, modal) {
+        const activeLink = modal.querySelector(".page-item.active .page-link");
+        if (event.target === activeLink) {
+            // Exit early if the selected page is already the current page.
+            return;
+        }
+
+        let pageClass = activeLink.getAttribute("data-page");
+
+        // Hide the current page and make it inactive.
+        modal.querySelector(pageClass).classList.add("d-none");
+        activeLink.removeAttribute("aria-current");
+        activeLink.parentElement.classList.remove("active");
+
+        // Show the selected page and make it active.
+        pageClass = event.target.getAttribute("data-page");
+        modal.querySelector(pageClass).classList.remove("d-none");
+        event.target.setAttribute("aria-current", "page");
+        event.target.parentElement.classList.add("active");
     }
 
     clear() {

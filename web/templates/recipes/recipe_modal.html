@@ -7,20 +7,27 @@
                         aria-label="Close"></button>
             </div>
             <div class="modal-body px-5">
-                <img class="recipe-modal-img mx-auto d-block mb-3" src="">
-                <p class="recipe-summary px-lg-5"></p>
+                <div class="page-1">
+                    <img class="recipe-modal-img mx-auto d-block mb-3" src="">
+                    <p class="recipe-summary px-lg-5"></p>
+                </div>
+                <div class="page-2 d-none">
+                </div>
+                <div class="page-3 d-none">
+                    <ol class="recipe-instructions px-lg-5"></ol>
+                </div>
             </div>
             <div class="modal-footer justify-content-center">
-                <nav aria-label="Recipe page navigation">
+                <nav aria-label="Recipe details navigation">
                     <ul class="pagination m-0">
                         <li class="page-item active">
-                            <a class="page-link" href="#" aria-current="page">Summary</a>
+                            <a class="page-link" data-page=".page-1" aria-current="page">Summary</a>
                         </li>
                         <li class="page-item">
-                            <a class="page-link" href="#">Requirements</a>
+                            <a class="page-link" data-page=".page-2">Requirements</a>
                         </li>
                         <li class="page-item">
-                            <a class="page-link" href="#">Instructions</a>
+                            <a class="page-link" data-page=".page-3">Instructions</a>
                         </li>
                     </ul>
                 </nav>
