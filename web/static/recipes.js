@@ -26,6 +26,7 @@ export class RecipeManager {
             type: type.value,
             sort: sort.value,
             maxReadyTime: time.value,
+            fillInstructions="true",
         };
 
         const url = new URL("api/search", window.location.href);

@@ -54,7 +54,7 @@ def handle_requests_exception(error: requests.HTTPError):
 @limiter.limit("1/minute", deduct_when=lambda r: r.status_code == 200)
 def search_api():
     # Disallow these to conserve the request quota.
-    for arg in ("fillIngredients", "addRecipeNutrition"):
+    for arg in ("addRecipeNutrition"):
         if request.args.get(arg) == "true":
             flask.abort(403, description=f"{arg} is disabled.")
 
