@@ -1,17 +1,22 @@
 export class PaginatedModal extends bootstrap.Modal {
     constructor(element, config) {
         super(element, config);
+        this._pageLinks = [];
 
-        for (const pageLink of this._element.querySelectorAll(".page-link")) {
-            pageLink.addEventListener("click", this._changePage.bind(this));
+        const links = this._element.querySelectorAll(
+            ".modal-footer .page-link"
+        );
+        for (const link of links) {
+            this._pageLinks.push(link);
+            link.addEventListener("click", (e) => this._setPage(e.target));
         }
     }
 
-    _changePage(event) {
+    _setPage(target) {
         const activeLink = this._element.querySelector(
-            ".page-item.active .page-link"
+            ".modal-footer .page-item.active .page-link"
         );
-        if (event.target === activeLink) {
+        if (target === activeLink) {
             // Exit early if the selected page is already the current page.
             return;
         }
@@ -24,10 +29,14 @@ export class PaginatedModal extends bootstrap.Modal {
         activeLink.parentElement.classList.remove("active");
 
         // Show the selected page and make it active.
-        pageClass = event.target.getAttribute("data-page");
+        pageClass = target.getAttribute("data-page");
         this._element.querySelector(pageClass).classList.remove("d-none");
-        event.target.setAttribute("aria-current", "page");
-        event.target.parentElement.classList.add("active");
+        target.setAttribute("aria-current", "page");
+        target.parentElement.classList.add("active");
+    }
+
+    setPage(pageNum) {
+        this._setPage(this._pageLinks[pageNum - 1]);
     }
 }
 
@@ -46,9 +55,10 @@ export class RecipeModal extends PaginatedModal {
             this._fillSummary(recipe);
             this._fillIngredients(recipe);
             this._fillInstructions(recipe);
+
+            this.setPage(1);
         }
 
-        // TODO: set active page to summary if it's a different recipe.
         this._prevRecipeID = recipe.id;
         return super.show(relatedTarget);
     }
