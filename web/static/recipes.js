@@ -1,12 +1,11 @@
-import {PaginatedModal} from "./modal.js";
+import {RecipeModal} from "./modal.js";
 
 export class RecipeManager {
     constructor(searchButtonId, ingredientManager) {
         this.ingredientManager = ingredientManager;
 
         this.searchButton = document.getElementById(searchButtonId);
-        this.modalEl = document.getElementById("recipe-modal");
-        this.modal = new PaginatedModal(this.modalEl);
+        this.modal = new RecipeModal(document.getElementById("recipe-modal"));
     }
 
     bind() {
@@ -67,7 +66,9 @@ export class RecipeManager {
 
         const image = clone.querySelector(".recipe-img");
         image.src = recipe.image;
-        image.addEventListener("click", (e) => this.showModal(e, recipe));
+        image.addEventListener("click", (e) =>
+            this.modal.show(e.target, recipe)
+        );
 
         clone.querySelector(
             ".recipe-healthiness"
@@ -82,57 +83,6 @@ export class RecipeManager {
         ).toFixed(2);
 
         template.parentNode.appendChild(clone);
-    }
-
-    showModal(event, recipe) {
-        // TODO: avoid refilling if the same recipe is opened again.
-        this.modalEl.querySelector(".modal-title").textContent = recipe.title;
-        this.modalEl.querySelector("#summary").innerHTML = recipe.summary;
-        this.modalEl.querySelector("#summary-img").src = recipe.image;
-
-        this.fillInstructions(recipe);
-        this.fillIngredients(recipe);
-
-        // TODO: set active page to summary if it's a different recipe
-        this.modal.show(event.target);
-    }
-
-    fillInstructions(recipe) {
-        const orderedList = this.modalEl.querySelector("#instructions");
-        orderedList.replaceChildren();
-
-        for (const instructions of recipe.analyzedInstructions) {
-            for (const step of instructions.steps) {
-                const listItem = document.createElement("li");
-                listItem.textContent = step.step;
-                orderedList.appendChild(listItem);
-            }
-        }
-    }
-
-    fillIngredients(recipe) {
-        const template = this.modalEl.querySelector("#req-ingr-template");
-        template.parentElement.replaceChildren(template);
-
-        for (const ingredient of recipe.extendedIngredients) {
-            const clone = template.cloneNode(true);
-
-            clone.id = `req-ingr-${ingredient.id}`;
-
-            const name = clone.querySelector(".name");
-            name.textContent = ingredient.name;
-
-            const quantity = clone.querySelector(".quantity");
-            quantity.textContent = `${+ingredient.amount.toFixed(2)} `;
-            quantity.textContent += ingredient.unit;
-
-            const image = clone.querySelector("img");
-            const imageName = ingredient.image ?? "no.jpg";
-            image.title = `${quantity.textContent} ${ingredient.name}`;
-            image.src = `https://spoonacular.com/cdn/ingredients_100x100/${imageName}`;
-
-            template.parentElement.appendChild(clone);
-        }
     }
 
     clear() {
