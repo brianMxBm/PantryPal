@@ -101,7 +101,7 @@ here by 4 rather than by 2.
 }
 
 .recipe-img,
-.recipe .page-link {
+#recipe-modal .modal-footer .page-link {
     cursor: pointer;
 }
 

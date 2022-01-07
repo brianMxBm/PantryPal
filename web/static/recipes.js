@@ -1,8 +1,12 @@
+import {PaginatedModal} from "./modal.js";
+
 export class RecipeManager {
     constructor(searchButtonId, ingredientManager) {
         this.ingredientManager = ingredientManager;
 
         this.searchButton = document.getElementById(searchButtonId);
+        this.modalEl = document.getElementById("recipe-modal");
+        this.modal = new PaginatedModal(this.modalEl);
     }
 
     bind() {
@@ -63,6 +67,7 @@ export class RecipeManager {
 
         const image = clone.querySelector(".recipe-img");
         image.src = recipe.image;
+        image.addEventListener("click", (e) => this.showModal(e, recipe));
 
         clone.querySelector(
             ".recipe-healthiness"
@@ -76,33 +81,25 @@ export class RecipeManager {
             recipe.pricePerServing / 100
         ).toFixed(2);
 
-        const modal = clone.querySelector("#recipe-modal-template");
-        this.fillModal(modal, image, recipe);
-        this.fillIngredients(modal, recipe);
-
         template.parentNode.appendChild(clone);
     }
 
-    fillModal(modal, trigger, recipe) {
-        modal.id = `recipe-modal-${recipe.id}`;
-        modal.querySelector(".modal-title").textContent = recipe.title;
-        modal.querySelector(".recipe-summary").innerHTML = recipe.summary;
-        modal.querySelector(".recipe-modal-img").src = recipe.image;
-        this.fillInstructions(modal, recipe);
+    showModal(event, recipe) {
+        // TODO: avoid refilling if the same recipe is opened again.
+        this.modalEl.querySelector(".modal-title").textContent = recipe.title;
+        this.modalEl.querySelector("#summary").innerHTML = recipe.summary;
+        this.modalEl.querySelector("#summary-img").src = recipe.image;
 
-        // Needed for Bootstrap to be able to toggle this modal.
-        trigger.setAttribute("data-bs-target", "#" + modal.id);
+        this.fillInstructions(recipe);
+        this.fillIngredients(recipe);
 
-        // Set click events for pagination.
-        for (const pageLink of modal.querySelectorAll(".page-link")) {
-            pageLink.addEventListener("click", (e) =>
-                this.changeModalPage(e, modal)
-            );
-        }
+        // TODO: set active page to summary if it's a different recipe
+        this.modal.show(event.target);
     }
 
-    fillInstructions(modal, recipe) {
-        const orderedList = modal.querySelector(".recipe-instructions");
+    fillInstructions(recipe) {
+        const orderedList = this.modalEl.querySelector("#instructions");
+        orderedList.replaceChildren();
 
         for (const instructions of recipe.analyzedInstructions) {
             for (const step of instructions.steps) {
@@ -113,8 +110,9 @@ export class RecipeManager {
         }
     }
 
-    fillIngredients(modal, recipe) {
-        const template = modal.querySelector("#req-ingr-template");
+    fillIngredients(recipe) {
+        const template = this.modalEl.querySelector("#req-ingr-template");
+        template.parentElement.replaceChildren(template);
 
         for (const ingredient of recipe.extendedIngredients) {
             const clone = template.cloneNode(true);
@@ -137,29 +135,8 @@ export class RecipeManager {
         }
     }
 
-    changeModalPage(event, modal) {
-        const activeLink = modal.querySelector(".page-item.active .page-link");
-        if (event.target === activeLink) {
-            // Exit early if the selected page is already the current page.
-            return;
-        }
-
-        let pageClass = activeLink.getAttribute("data-page");
-
-        // Hide the current page and make it inactive.
-        modal.querySelector(pageClass).classList.add("d-none");
-        activeLink.removeAttribute("aria-current");
-        activeLink.parentElement.classList.remove("active");
-
-        // Show the selected page and make it active.
-        pageClass = event.target.getAttribute("data-page");
-        modal.querySelector(pageClass).classList.remove("d-none");
-        event.target.setAttribute("aria-current", "page");
-        event.target.parentElement.classList.add("active");
-    }
-
     clear() {
         const template = document.getElementById("recipe-template");
-        template.parentElement.innerHTML = template.outerHTML;
+        template.parentElement.replaceChildren(template);
     }
 }
