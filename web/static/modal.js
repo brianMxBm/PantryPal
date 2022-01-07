@@ -96,7 +96,7 @@ export class RecipeModal extends PaginatedModal {
             const quantity = clone.querySelector(".quantity");
             quantity.textContent = `${+ingredient.amount.toFixed(2)} `;
             quantity.textContent += ingredient.unit;
-
+            quantity.textContent.trim(); // Avoid space when units are empty.
             const image = clone.querySelector("img");
             const imageName = ingredient.image ?? "no.jpg";
             image.title = `${quantity.textContent} ${ingredient.name}`;
