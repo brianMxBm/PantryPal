@@ -62,6 +62,9 @@ export class RecipeManager {
         clone.querySelector(".recipe-name").textContent = recipe.title;
 
         const image = clone.querySelector(".recipe-img");
+        const imageName = ingredient.image ?? "no.jpg";
+        image.title = `${quantity.textContent} ${ingredient.name}`;
+        image.src = `https://spoonacular.com/cdn/ingredients_100x100/${imageName}`;
         image.src = recipe.image;
 
         clone.querySelector(
@@ -122,7 +125,7 @@ export class RecipeManager {
             clone.id = `req-ingr-${ingredient.id}`;
 
             const name = clone.querySelector(".name");
-            name.textContent = ingredient.nameClean;
+            name.textContent = ingredient.name;
 
             const quantity = clone.querySelector(".quantity");
             quantity.textContent = `${+ingredient.amount.toFixed(2)} `;
