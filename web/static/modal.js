@@ -32,17 +32,24 @@ export class PaginatedModal extends bootstrap.Modal {
 }
 
 export class RecipeModal extends PaginatedModal {
+    constructor(element, config) {
+        super(element, config);
+        this._prevRecipeID = undefined;
+    }
+
     toggle(relatedTarget, recipe) {
         return this._isShown ? this.hide() : this.show(relatedTarget, recipe);
     }
 
     show(relatedTarget, recipe) {
-        // TODO: avoid refilling if the same recipe is opened again.
-        this._fillSummary(recipe);
-        this._fillIngredients(recipe);
-        this._fillInstructions(recipe);
+        if (this._prevRecipeID !== recipe.id) {
+            this._fillSummary(recipe);
+            this._fillIngredients(recipe);
+            this._fillInstructions(recipe);
+        }
 
         // TODO: set active page to summary if it's a different recipe.
+        this._prevRecipeID = recipe.id;
         return super.show(relatedTarget);
     }
 
