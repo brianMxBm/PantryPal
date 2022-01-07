@@ -66,7 +66,8 @@ here by 4 rather than by 2.
 }
 
 #ingredient-template,
-#recipe-template {
+#recipe-template,
+#req-ingr-template {
     display: none;
 }
 
@@ -102,4 +103,9 @@ here by 4 rather than by 2.
 .recipe-img,
 .recipe .page-link {
     cursor: pointer;
+}
+
+.req-ingr img {
+    height: 70px;
+    object-fit: contain;
 }

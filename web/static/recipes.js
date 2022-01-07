@@ -22,11 +22,11 @@ export class RecipeManager {
         const params = {
             includeIngredients: ingredients.map((i) => i.name).join(","),
             addRecipeInformation: "true",
+            fillIngredients: "true",
             cuisine: cuisine.value,
             type: type.value,
             sort: sort.value,
             maxReadyTime: time.value,
-            fillInstructions:"true",
         };
 
         const url = new URL("api/search", window.location.href);
@@ -78,6 +78,7 @@ export class RecipeManager {
 
         const modal = clone.querySelector("#recipe-modal-template");
         this.fillModal(modal, image, recipe);
+        this.fillIngredients(modal, recipe);
 
         template.parentNode.appendChild(clone);
     }
@@ -109,6 +110,29 @@ export class RecipeManager {
                 listItem.textContent = step.step;
                 orderedList.appendChild(listItem);
             }
+        }
+    }
+
+    fillIngredients(modal, recipe) {
+        const template = modal.querySelector("#req-ingr-template");
+
+        for (const ingredient of recipe.extendedIngredients) {
+            const clone = template.cloneNode(true);
+
+            clone.id = `req-ingr-${ingredient.id}`;
+
+            const name = clone.querySelector(".name");
+            name.textContent = ingredient.nameClean;
+
+            const quantity = clone.querySelector(".quantity");
+            quantity.textContent = `${+ingredient.amount.toFixed(2)} `;
+            quantity.textContent += ingredient.unit;
+
+            const image = clone.querySelector("img");
+            image.title = `${quantity.textContent} ${ingredient.nameClean}`;
+            image.src = `https://spoonacular.com/cdn/ingredients_100x100/${ingredient.image}`;
+
+            template.parentElement.appendChild(clone);
         }
     }
 
