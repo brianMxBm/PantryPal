@@ -8,7 +8,7 @@ bp = flask.Blueprint("recipes", __name__)
 TEMPLATE_ROOT = Path(bp.root_path, "templates")
 MODAL_PAGES = []
 
-for p in sorted(TEMPLATE_ROOT / "recipes/modal_pages").iterdir():
+for p in sorted((TEMPLATE_ROOT / "recipes/modal_pages").iterdir()):
     page = str(p.relative_to(TEMPLATE_ROOT).as_posix()), p.stem[3:].replace("_", " ").title()
     MODAL_PAGES.append(page)
 
