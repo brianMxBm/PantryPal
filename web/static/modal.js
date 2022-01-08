@@ -44,6 +44,11 @@ export class RecipeModal extends PaginatedModal {
     constructor(element, config) {
         super(element, config);
         this._prevRecipeID = undefined;
+
+        const radios = this._element.querySelectorAll("#radio-units input");
+        for (const radio of radios) {
+            radio.addEventListener("change", this._changeAllUnits.bind(this));
+        }
     }
 
     toggle(relatedTarget, recipe) {
@@ -93,16 +98,47 @@ export class RecipeModal extends PaginatedModal {
             const name = clone.querySelector(".name");
             name.textContent = ingredient.name;
 
-            const quantity = clone.querySelector(".quantity");
-            quantity.textContent = `${+ingredient.amount.toFixed(2)} `;
-            quantity.textContent += ingredient.unit;
-            quantity.textContent.trim(); // Avoid space when units are empty.
             const image = clone.querySelector("img");
             const imageName = ingredient.image ?? "no.jpg";
-            image.title = `${quantity.textContent} ${ingredient.name}`;
             image.src = `https://spoonacular.com/cdn/ingredients_100x100/${imageName}`;
 
+            // Save quantity strings in both units.
+            for (const unitType of ["metric", "us"]) {
+                const measure = ingredient.measures[unitType];
+                const amount = `${+measure.amount.toFixed(2)} `;
+                clone.setAttribute(
+                    `data-${unitType}`,
+                    (amount + measure.unitShort).trim()
+                );
+            }
+
+            this._changeUnits(clone);
+
             template.parentElement.appendChild(clone);
+        }
+    }
+
+    _changeUnits(ingredient) {
+        const checked = this._element.querySelector(
+            "#radio-units input:checked"
+        );
+        const unitType = checked.getAttribute("data-unit");
+
+        const quantity = ingredient.querySelector(".quantity");
+        quantity.textContent = ingredient.getAttribute(`data-${unitType}`);
+
+        const image = ingredient.querySelector("img");
+        image.title = `${quantity.textContent} ${ingredient.name}`;
+    }
+
+    _changeAllUnits(event) {
+        if (!event.target.checked) {
+            return;
+        }
+
+        const ingredients = this._element.querySelectorAll(".req-ingr");
+        for (const ingredient of ingredients) {
+            this._changeUnits(ingredient);
         }
     }
 }
