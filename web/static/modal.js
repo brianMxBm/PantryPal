@@ -109,6 +109,7 @@ export class RecipeModal extends PaginatedModal {
                 );
             }
 
+            node.setAttribute("data-name", ingredient.name);
             this._changeUnits(node);
         }
     }
@@ -151,7 +152,8 @@ export class RecipeModal extends PaginatedModal {
         quantity.textContent = ingredient.getAttribute(`data-${unitType}`);
 
         const image = ingredient.querySelector("img");
-        image.title = `${quantity.textContent} ${ingredient.name}`;
+        const name = ingredient.getAttribute("data-name");
+        image.title = `${quantity.textContent} ${name}`.trim();
     }
 
     _changeAllUnits(event) {
