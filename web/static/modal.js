@@ -59,6 +59,7 @@ export class RecipeModal extends PaginatedModal {
         if (this._prevRecipeID !== recipe.id) {
             this._fillSummary(recipe);
             this._fillIngredients(recipe);
+            this._fillEquipment(recipe);
             this._fillInstructions(recipe);
 
             this.setPage(1);
@@ -92,30 +93,52 @@ export class RecipeModal extends PaginatedModal {
         template.parentElement.replaceChildren(template);
 
         for (const ingredient of recipe.extendedIngredients) {
-            const clone = template.cloneNode(true);
-            clone.id = `req-ingr-${ingredient.id}`;
-
-            const name = clone.querySelector(".name");
-            name.textContent = ingredient.name;
-
-            const image = clone.querySelector("img");
-            const imageName = ingredient.image ?? "no.jpg";
-            image.src = `https://spoonacular.com/cdn/ingredients_100x100/${imageName}`;
+            const node = this._createRequirement(
+                ingredient,
+                template,
+                "ingredients"
+            );
 
             // Save quantity strings in both units.
             for (const unitType of ["metric", "us"]) {
                 const measure = ingredient.measures[unitType];
                 const amount = `${+measure.amount.toFixed(2)} `;
-                clone.setAttribute(
+                node.setAttribute(
                     `data-${unitType}`,
                     (amount + measure.unitShort).trim()
                 );
             }
 
-            this._changeUnits(clone);
-
-            template.parentElement.appendChild(clone);
+            this._changeUnits(node);
         }
+    }
+
+    _fillEquipment(recipe) {
+        const template = this._element.querySelector("#req-equip-template");
+        template.parentElement.replaceChildren(template);
+
+        for (const instructions of recipe.analyzedInstructions) {
+            for (const step of instructions.steps) {
+                for (const equip of step.equipment) {
+                    this._createRequirement(equip, template, "equipment");
+                }
+            }
+        }
+    }
+
+    _createRequirement(data, template, type) {
+        const clone = template.cloneNode(true);
+        clone.id = `req-${type}-${data.id}`;
+
+        const name = clone.querySelector(".name");
+        name.textContent = data.name;
+
+        const image = clone.querySelector("img");
+        const imageName = data.image ?? "no.jpg";
+        image.src = `https://spoonacular.com/cdn/${type}_100x100/${imageName}`;
+
+        template.parentElement.appendChild(clone);
+        return clone;
     }
 
     _changeUnits(ingredient) {

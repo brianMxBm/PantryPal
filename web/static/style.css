@@ -67,7 +67,8 @@ here by 4 rather than by 2.
 
 #ingredient-template,
 #recipe-template,
-#req-ingr-template {
+#req-ingr-template,
+#req-equip-template {
     display: none;
 }
 
@@ -105,7 +106,8 @@ here by 4 rather than by 2.
     cursor: pointer;
 }
 
-.req-ingr img {
+.req-ingr img,
+.req-equip img {
     height: 70px;
     object-fit: contain;
 }
