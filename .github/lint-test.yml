@@ -52,7 +52,7 @@ jobs:
               with:
                   path: ${{ env.PRE_COMMIT_HOME }}
                   key:
-                      "precommit-0-${{ runner.os }}-${{ env.PRE_COMMIT_HOME }}-\
+                      "precommit-1-${{ runner.os }}-${{ env.PRE_COMMIT_HOME }}-\
                       ${{ steps.python.outputs.python-version }}-\
                       ${{ hashFiles('./.pre-commit-config.yaml') }}"
 
