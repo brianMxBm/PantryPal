@@ -8,5 +8,9 @@ const ingredientManager = new IngredientManager(
 ingredientManager.bind();
 
 // Dependency injection, wow!
-const recipeManager = new RecipeManager("button-search", ingredientManager);
+const recipeManager = new RecipeManager(
+    "button-search",
+    "check-recipe-hide",
+    ingredientManager
+);
 recipeManager.bind();

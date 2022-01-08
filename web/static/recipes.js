@@ -1,15 +1,21 @@
 import {RecipeModal} from "./modal.js";
 
 export class RecipeManager {
-    constructor(searchButtonId, ingredientManager) {
+    constructor(searchButtonId, missingButtonId, ingredientManager) {
         this.ingredientManager = ingredientManager;
 
         this.searchButton = document.getElementById(searchButtonId);
+        this.missingButton = document.getElementById(missingButtonId);
+
         this.modal = new RecipeModal(document.getElementById("recipe-modal"));
     }
 
     bind() {
         this.searchButton.addEventListener("click", this.search.bind(this));
+        this.missingButton.addEventListener(
+            "change",
+            this.toggleMissing.bind(this)
+        );
     }
 
     buildURL() {
@@ -63,6 +69,7 @@ export class RecipeManager {
 
         clone.id = `recipe-${recipe.id}`;
         clone.querySelector(".recipe-name").textContent = recipe.title;
+        clone.setAttribute("data-missing", recipe.missedIngredientCount > 0);
 
         const image = clone.querySelector(".recipe-img");
         image.src = recipe.image;
@@ -83,6 +90,19 @@ export class RecipeManager {
         ).toFixed(2);
 
         template.parentNode.appendChild(clone);
+    }
+
+    toggleMissing(event) {
+        const recipes = document.querySelectorAll(".recipe");
+
+        for (const recipe of recipes) {
+            const isMissing = recipe.getAttribute("data-missing") === "true";
+            if (event.target.checked && isMissing) {
+                recipe.classList.add("d-none");
+            } else {
+                recipe.classList.remove("d-none");
+            }
+        }
     }
 
     clear() {
