@@ -118,10 +118,15 @@ export class RecipeModal extends PaginatedModal {
         const template = this._element.querySelector("#req-equip-template");
         template.parentElement.replaceChildren(template);
 
+        const seen = new Set(); // Used to skip duplicate equipment.
+
         for (const instructions of recipe.analyzedInstructions) {
             for (const step of instructions.steps) {
                 for (const equip of step.equipment) {
-                    this._createRequirement(equip, template, "equipment");
+                    if (!seen.has(equip.id)) {
+                        this._createRequirement(equip, template, "equipment");
+                        seen.add(equip.id);
+                    }
                 }
             }
         }
@@ -137,6 +142,7 @@ export class RecipeModal extends PaginatedModal {
         const image = clone.querySelector("img");
         const imageName = data.image || "no.png";
         image.src = `https://spoonacular.com/cdn/${type}_100x100/${imageName}`;
+        image.title = data.name;
 
         template.parentElement.appendChild(clone);
         return clone;
