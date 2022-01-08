@@ -44,7 +44,7 @@ export class IngredientManager {
         if (!this.ingredients.has(info.id.toString())) {
             this.ingredients.set(info.id.toString(), info);
             const node = this.show(info);
-            this.addToolTip(node, info.image ?? "no.jpg");
+            this.addToolTip(node, info.image || "no.png");
         }
 
         this.input.value = ""; // Clear the input bar.
