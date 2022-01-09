@@ -16,5 +16,3 @@ const recipeManager = new RecipeManager(
     client
 );
 recipeManager.bind();
-© 2022 GitHub, Inc.
-Terms
