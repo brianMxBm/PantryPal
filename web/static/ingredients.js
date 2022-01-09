@@ -59,12 +59,6 @@ export class IngredientInput {
             return;
         }
 
-        // Clear the count if the input is cleared.
-        if (value.length === 0) {
-            this._inputCount = 0;
-            return;
-        }
-
         const passedThreshold = value.length >= this._acOptions.treshold;
         const time = performance.now();
         const delta = time - this._lastInputTime;
@@ -73,6 +67,12 @@ export class IngredientInput {
         this._inputCount += Math.abs(value.length - this._lastInput.length);
         this._lastInput = value;
         this._lastInputTime = time;
+
+        // Clear the count if the input is cleared.
+        if (value.length === 0) {
+            this._inputCount = 0;
+            return;
+        }
 
         // Get data when 3 more chars are entered or its been more than 1.5s.
         if (passedThreshold && (this._inputCount >= 3 || delta >= 1500)) {
