@@ -1,3 +1,4 @@
+import {Autocomplete} from "./vendored/autocomplete.js";
 import {diff} from "./vendored/levenshtein.js";
 
 export class IngredientInput {
