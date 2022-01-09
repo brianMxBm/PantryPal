@@ -29,7 +29,7 @@ export class RecipeManager {
             this.ingredientManager.ingredients.values()
         );
         const params = {
-            includeIngredients: ingredients.map((i) => i.name).join(","),
+            includeIngredients: ingredients.join(","),
             addRecipeInformation: "true",
             fillIngredients: "true",
             cuisine: cuisine.value,
