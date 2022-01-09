@@ -51,7 +51,7 @@ def handle_requests_exception(error: requests.HTTPError):
 
 
 @bp.route("/search")
-@limiter.limit("1/minute", deduct_when=lambda r: r.status_code == 200)
+@limiter.limit("2/2minute", deduct_when=lambda r: r.status_code == 200)
 def search_api():
     # Disallow these to conserve the request quota.
     for arg in ("addRecipeNutrition",):
@@ -66,7 +66,7 @@ def search_api():
 
 
 @bp.route("/ingredients")
-@limiter.limit("150/minute", deduct_when=lambda r: r.status_code == 200)
+@limiter.limit("50/2minute", deduct_when=lambda r: r.status_code == 200)
 def ingredient_api():
     # Disallow this to conserve the request quota.
     if request.args.get("metaInformation") == "true":

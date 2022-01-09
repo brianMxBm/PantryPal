@@ -18,8 +18,8 @@ class Endpoint(NamedTuple):
 
 
 ENDPOINTS = (
-    Endpoint("api.search_api", "recipes/complexSearch", "GET", 1),
-    Endpoint("api.ingredient_api", "food/ingredients/autocomplete", "GET", 150),
+    Endpoint("api.search_api", "recipes/complexSearch", "GET", 2),
+    Endpoint("api.ingredient_api", "food/ingredients/autocomplete", "GET", 50),
 )
 
 
