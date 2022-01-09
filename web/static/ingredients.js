@@ -1,4 +1,4 @@
-import {diff} from "./levenshtein.js";
+import {diff} from "./vendored/levenshtein.js";
 
 export class IngredientInput {
     constructor() {
