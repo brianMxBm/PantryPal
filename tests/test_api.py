@@ -113,7 +113,7 @@ def test_error_json_response(client, endpoint, error):
     )
 
 
-@pytest.mark.parametrize("param", ["fillIngredients", "addRecipeNutrition"])
+@pytest.mark.parametrize("param", ["addRecipeNutrition"])
 @pytest.mark.parametrize(["value", "expected_status"], [("true", 403), ("false", 200)])
 def test_search_disabled_params(client, requests_mock, param, value, expected_status):
     """Search endpoint should return 403 when disabled params are true, and 200 when false."""
