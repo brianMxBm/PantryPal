@@ -77,7 +77,16 @@ export class IngredientInput {
         // Get data when 3 more chars are entered or its been more than 1.5s.
         if (passedThreshold && (this._inputCount >= 3 || delta >= 1500)) {
             this._inputCount = 0;
-            this._getData().then((data) => this._autocomplete.setData(data));
+
+            // See how many matches there are against the current data.
+            const items = this._autocomplete.createItems();
+
+            // Get new data if there aren't enough matches in the current data.
+            if (items < this._autocomplete.options.maximumItems) {
+                this._getData().then((data) =>
+                    this._autocomplete.setData(data)
+                );
+            }
         }
     }
 
