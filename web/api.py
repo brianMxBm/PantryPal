@@ -9,7 +9,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from werkzeug.exceptions import HTTPException
 
-SPOONACULAR_BASE = "https://api.spoonacular.com/recipes/"
+SPOONACULAR_BASE = "https://api.spoonacular.com/"
 DEBUG_DATA_PATH = Path("recipe_data.json")
 
 bp = flask.Blueprint("api", __name__)
@@ -51,22 +51,26 @@ def handle_requests_exception(error: requests.HTTPError):
 
 
 @bp.route("/search")
-@limiter.limit("1/minute", deduct_when=lambda r: r.status_code == 200)
+@limiter.limit("2/2minute", deduct_when=lambda r: r.status_code == 200)
 def search_api():
     # Disallow these to conserve the request quota.
-    for arg in ("addRecipeNutrition"):
+    for arg in ("addRecipeNutrition",):
         if request.args.get(arg) == "true":
             flask.abort(403, description=f"{arg} is disabled.")
 
     if app.config.get("DEBUG") and DEBUG_DATA_PATH.exists():
         return DEBUG_DATA_PATH.read_text(encoding="utf8"), 201, {"content-type": "application/json"}
 
-    response = session.get(f"{SPOONACULAR_BASE}complexSearch", params=request.args)
+    response = session.get(f"{SPOONACULAR_BASE}recipes/complexSearch", params=request.args)
     return response.text, 200, {"content-type": "application/json"}
 
 
-@bp.route("/ingredients", methods=["POST"])
-@limiter.limit("15/minute", deduct_when=lambda r: r.status_code == 200)
+@bp.route("/ingredients")
+@limiter.limit("50/2minute", deduct_when=lambda r: r.status_code == 200)
 def ingredient_api():
-    response = session.post(f"{SPOONACULAR_BASE}parseIngredients", data=request.form)
+    # Disallow this to conserve the request quota.
+    if request.args.get("metaInformation") == "true":
+        flask.abort(403, description="metaInformation is disabled.")
+
+    response = session.get(f"{SPOONACULAR_BASE}food/ingredients/autocomplete", params=request.args)
     return response.text, 200, {"content-type": "application/json"}

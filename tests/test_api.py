@@ -18,8 +18,8 @@ class Endpoint(NamedTuple):
 
 
 ENDPOINTS = (
-    Endpoint("api.search_api", "complexSearch", "GET", 1),
-    Endpoint("api.ingredient_api", "parseIngredients", "POST", 15),
+    Endpoint("api.search_api", "recipes/complexSearch", "GET", 2),
+    Endpoint("api.ingredient_api", "food/ingredients/autocomplete", "GET", 50),
 )
 
 
@@ -113,11 +113,11 @@ def test_error_json_response(client, endpoint, error):
     )
 
 
-@pytest.mark.parametrize("param", ["fillIngredients", "addRecipeNutrition"])
+@pytest.mark.parametrize("param", ["addRecipeNutrition"])
 @pytest.mark.parametrize(["value", "expected_status"], [("true", 403), ("false", 200)])
 def test_search_disabled_params(client, requests_mock, param, value, expected_status):
     """Search endpoint should return 403 when disabled params are true, and 200 when false."""
-    requests_mock.get(SPOONACULAR_BASE + "complexSearch", json={})
+    requests_mock.get(SPOONACULAR_BASE + "recipes/complexSearch", json={})
 
     res = client.get(flask.url_for("api.search_api", **{param: value}))
 

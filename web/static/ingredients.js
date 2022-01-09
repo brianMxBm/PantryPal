@@ -1,6 +1,109 @@
+import {Autocomplete} from "./vendored/autocomplete.js";
+import {diff} from "./vendored/levenshtein.js";
+
+export class IngredientInput {
+    constructor() {
+        this._input = undefined;
+        this._inputCount = 0;
+        this._lastInput = "";
+        this._lastInputTime = 0;
+
+        this._selection = undefined;
+
+        this._autocomplete = undefined;
+        this._acOptions = {
+            label: "name",
+            value: "image",
+            treshold: 3, // Yes, it's misspelled in the lib.
+            onSelectItem: this._onSelectItem.bind(this),
+            onInput: this._onInput.bind(this),
+            data: [],
+        };
+    }
+
+    get element() {
+        return this._input;
+    }
+
+    bind(form, onSubmit) {
+        this._input = form.querySelector("input[type='search']");
+        this._lastInput = this._input.value;
+        this._autocomplete = new Autocomplete(this._input, this._acOptions);
+
+        // Call the provided callback when the form is submitted.
+        form.addEventListener("submit", (e) => onSubmit(e, this._selection));
+    }
+
+    _buildURL() {
+        const params = {
+            query: this._input.value,
+            number: 100,
+        };
+
+        const url = new URL("api/ingredients", window.location.href);
+        Object.keys(params).forEach((key) =>
+            url.searchParams.append(key, params[key])
+        );
+
+        return url;
+    }
+
+    async _getData() {
+        // TODO: check the returned status code.
+        // TODO: check for empty input.
+        const url = this._buildURL();
+        const response = await fetch(url);
+
+        return await response.json();
+    }
+
+    _onInput(value) {
+        if (value === this._lastInput) {
+            return;
+        }
+
+        const passedThreshold = value.length >= this._acOptions.treshold;
+        const time = performance.now();
+        const delta = time - this._lastInputTime;
+
+        this._inputCount += diff(value, this._lastInput);
+        this._lastInput = value;
+        this._lastInputTime = time;
+
+        // Clear the count if the input is cleared.
+        if (value.length === 0) {
+            this._inputCount = 0;
+            return;
+        }
+
+        // Get data when 3 more chars are entered or its been more than 1.5s.
+        if (passedThreshold && (this._inputCount >= 3 || delta >= 1500)) {
+            this._inputCount = 0;
+
+            // See how many matches there are against the current data.
+            const items = this._autocomplete.createItems();
+
+            // Get new data if there aren't enough matches in the current data.
+            if (items < this._autocomplete.options.maximumItems) {
+                this._getData().then((data) =>
+                    this._autocomplete.setData(data)
+                );
+            }
+        }
+    }
+
+    _onSelectItem(item) {
+        this._selection = item;
+        this._input.focus();
+        this._autocomplete.dropdown.hide();
+    }
+}
+
 export class IngredientManager {
-    constructor(addButtonId, inputId) {
-        this.ingredients = new Map();
+    constructor(input) {
+        this.input = input;
+        this.ingredients = new Set();
+
         this.toolTipOptions = {
             html: true,
             template: `
@@ -9,60 +112,33 @@ export class IngredientManager {
                     <div class="tooltip-inner border bg-light"></div>
                 </div>`,
         };
-
-        this.addButton = document.getElementById(addButtonId);
-        this.input = document.getElementById(inputId);
     }
 
-    bind() {
-        this.addButton.addEventListener("click", this.add.bind(this));
-        this.input.addEventListener("keyup", this.addOnEnterKey.bind(this));
+    bind(form) {
+        this.input.bind(form, this.add.bind(this));
     }
 
-    async parseInput() {
-        // TODO: check the returned status code.
-        // TODO: check for empty input.
-        const response = await fetch("api/ingredients", {
-            method: "POST",
-            body: new URLSearchParams({
-                ingredientList: this.input.value,
-            }),
-        });
-
-        // The API returns a list because it parses each line of input.
-        // However, ingredients come from the front end 1 by 1,
-        // so only use the first list item.
-        return (await response.json())[0];
-    }
-
-    async add() {
-        const info = await this.parseInput();
-
-        // TODO: display a message when a duplicate is entered.
-        // Store the ID as a string because it may later be read from an
-        // attribute as a string.
-        if (!this.ingredients.has(info.id.toString())) {
-            this.ingredients.set(info.id.toString(), info);
-            const node = this.show(info);
-            this.addToolTip(node, info.image || "no.png");
+    add(event, selection) {
+        if (this.input.element.value !== selection?.label) {
+            // TODO: display error because the input doesn't match a selection.
+            return;
+        } else if (!this.ingredients.has(selection.label)) {
+            this.ingredients.add(selection.label);
+            const node = this.show(selection.label);
+            this.addToolTip(node, selection.value || "no.png");
+        } else {
+            // TODO: display a message because a duplicate is entered.
         }
 
-        this.input.value = ""; // Clear the input bar.
+        this.input.element.value = ""; // Clear the input bar.
     }
 
-    show(info) {
+    show(name) {
         const template = document.getElementById("ingredient-template");
 
-        // Create an element for the new ingredient by cloning the template.
         const clone = template.cloneNode(true);
-
-        // Fill in the template with the actual ingredient data.
-        clone.id = `ingredient-${info.id}`;
-        clone.firstElementChild.textContent = `${info.name}, ${info.amount} ${info.unitShort}`;
-
-        // Used to delete it from the map.
-        clone.setAttribute("data-id", info.id);
-
+        clone.removeAttribute("id");
+        clone.firstElementChild.textContent = name;
         clone
             .querySelector(".btn-close")
             .addEventListener("click", this.delete.bind(this));
@@ -94,15 +170,8 @@ export class IngredientManager {
     delete(event) {
         bootstrap.Tooltip.getInstance(event.target.parentNode).dispose();
         this.ingredients.delete(
-            event.target.parentNode.getAttribute("data-id")
+            event.target.parentNode.firstElementChild.textContent
         );
         event.target.parentNode.remove();
-    }
-
-    async addOnEnterKey(event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            await this.add();
-        }
     }
 }
