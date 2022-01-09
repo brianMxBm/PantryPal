@@ -1,3 +1,5 @@
+import {diff} from "./levenshtein.js";
+
 export class IngredientInput {
     constructor() {
         this._input = undefined;
@@ -63,8 +65,7 @@ export class IngredientInput {
         const time = performance.now();
         const delta = time - this._lastInputTime;
 
-        // TODO: this system fails if something of identical length is pasted.
-        this._inputCount += Math.abs(value.length - this._lastInput.length);
+        this._inputCount += diff(value, this._lastInput);
         this._lastInput = value;
         this._lastInputTime = time;
 
