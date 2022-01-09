@@ -5,4 +5,5 @@ extends:
     - standard
     - prettier
 globals:
+    Autocomplete: readonly
     bootstrap: readonly

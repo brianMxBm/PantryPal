@@ -1,11 +1,9 @@
-import {IngredientManager} from "./ingredients.js";
+import {IngredientInput, IngredientManager} from "./ingredients.js";
 import {RecipeManager} from "./recipes.js";
 
-const ingredientManager = new IngredientManager(
-    "button-add-ingredient",
-    "ingredient-input"
-);
-ingredientManager.bind();
+const input = new IngredientInput();
+const ingredientManager = new IngredientManager(input);
+ingredientManager.bind(document.querySelector("#form-ingredients"));
 
 // Dependency injection, wow!
 const recipeManager = new RecipeManager(
