@@ -108,12 +108,15 @@ export class IngredientManager {
     }
 
     add(event, selection) {
-        if (!this.ingredients.has(selection.label)) {
+        if (this.input.element.value !== selection?.label) {
+            // TODO: display error because the input doesn't match a selection.
+            return;
+        } else if (!this.ingredients.has(selection.label)) {
             this.ingredients.add(selection.label);
             const node = this.show(selection.label);
             this.addToolTip(node, selection.value || "no.png");
         } else {
-            // TODO: display a message when a duplicate is entered.
+            // TODO: display a message because a duplicate is entered.
         }
 
         this.input.element.value = ""; // Clear the input bar.
