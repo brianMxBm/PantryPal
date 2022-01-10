@@ -1,8 +1,9 @@
 import {RecipeModal} from "./modal.js";
 
 export class RecipeManager {
-    constructor(searchButtonId, missingButtonId, ingredientManager) {
+    constructor(searchButtonId, missingButtonId, ingredientManager, apiClient) {
         this.ingredientManager = ingredientManager;
+        this.api = apiClient;
 
         this.searchButton = document.getElementById(searchButtonId);
         this.missingButton = document.getElementById(missingButtonId);
@@ -18,7 +19,7 @@ export class RecipeManager {
         );
     }
 
-    buildURL() {
+    buildParams() {
         const sort = document.getElementById("sort");
         const type = document.getElementById("filter-type");
         const cuisine = document.getElementById("filter-cuisine");
@@ -28,7 +29,8 @@ export class RecipeManager {
         const ingredients = Array.from(
             this.ingredientManager.ingredients.values()
         );
-        const params = {
+
+        return {
             includeIngredients: ingredients.join(","),
             addRecipeInformation: "true",
             fillIngredients: "true",
@@ -37,20 +39,11 @@ export class RecipeManager {
             sort: sort.value,
             maxReadyTime: time.value,
         };
-
-        const url = new URL("api/search", window.location.href);
-        Object.keys(params).forEach((key) =>
-            url.searchParams.append(key, params[key])
-        );
-
-        return url;
     }
 
     async search() {
-        const url = this.buildURL();
-
         // TODO: check response status code.
-        const response = await fetch(url);
+        const response = await this.api.get("search", this.buildParams());
         const results = await response.json();
 
         this.showAll(results.results);

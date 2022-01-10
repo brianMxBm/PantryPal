@@ -2,7 +2,9 @@ import {Autocomplete} from "./vendored/autocomplete.js";
 import {diff} from "./vendored/levenshtein.js";
 
 export class IngredientInput {
-    constructor() {
+    constructor(apiClient) {
+        this._api = apiClient;
+
         this._input = undefined;
         this._inputCount = 0;
         this._lastInput = "";
@@ -34,25 +36,15 @@ export class IngredientInput {
         form.addEventListener("submit", (e) => onSubmit(e, this._selection));
     }
 
-    _buildURL() {
+    async _getData() {
         const params = {
             query: this._input.value,
             number: 100,
         };
 
-        const url = new URL("api/ingredients", window.location.href);
-        Object.keys(params).forEach((key) =>
-            url.searchParams.append(key, params[key])
-        );
-
-        return url;
-    }
-
-    async _getData() {
         // TODO: check the returned status code.
         // TODO: check for empty input.
-        const url = this._buildURL();
-        const response = await fetch(url);
+        const response = await this._api.get("ingredients", params);
 
         return await response.json();
     }

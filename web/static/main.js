@@ -1,7 +1,10 @@
 import {IngredientInput, IngredientManager} from "./ingredients.js";
 import {RecipeManager} from "./recipes.js";
+import {Client} from "./api.js";
 
-const input = new IngredientInput();
+const client = new Client();
+
+const input = new IngredientInput(client);
 const ingredientManager = new IngredientManager(input);
 ingredientManager.bind(document.querySelector("#form-ingredients"));
 
@@ -9,6 +12,7 @@ ingredientManager.bind(document.querySelector("#form-ingredients"));
 const recipeManager = new RecipeManager(
     "button-search",
     "check-recipe-hide",
-    ingredientManager
+    ingredientManager,
+    client
 );
 recipeManager.bind();
