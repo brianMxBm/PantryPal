@@ -33,7 +33,10 @@ export class IngredientInput {
         this._autocomplete = new Autocomplete(this._input, this._acOptions);
 
         // Call the provided callback when the form is submitted.
-        form.addEventListener("submit", (e) => onSubmit(e, this._selection));
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            onSubmit(e, this._selection);
+        });
     }
 
     async _getData() {
