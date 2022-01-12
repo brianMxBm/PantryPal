@@ -1,7 +1,17 @@
 import {Autocomplete} from "./vendored/autocomplete.js";
 import {diff} from "./vendored/levenshtein.js";
 
+/**
+ * Retrieves and validates user inputs for ingredients.
+ *
+ * Adds autocompletion to a form, using data from Spoonacular.
+ */
 export class IngredientInput {
+    /**
+     * Create an IngredientInput instance.
+     *
+     * @param {Client} apiClient The client to use for performing API requests.
+     */
     constructor(apiClient) {
         this._api = apiClient;
 
@@ -23,10 +33,21 @@ export class IngredientInput {
         };
     }
 
+    /**
+     * Get the text input element used to input ingredients.
+     *
+     * @returns {HTMLInputElement} The input element.
+     */
     get element() {
         return this._input;
     }
 
+    /**
+     * Attach an autocomplete dropdown and set up the form submit event listener.
+     *
+     * @param {HTMLFormElement} form The form used to input ingredients.
+     * @param {IngredientInput~SubmitCallback} onSubmit The callback for the form submit event.
+     */
     bind(form, onSubmit) {
         this._input = form.querySelector("input[type='search']");
         this._lastInput = this._input.value;
@@ -39,6 +60,14 @@ export class IngredientInput {
         });
     }
 
+    /**
+     * Get ingredient autocomplete data for the current user input.
+     *
+     * Perform an API call to retrieve 100 matches for the current input.
+     *
+     * @returns {Promise<any>} The deserialised JSON response.
+     * @private
+     */
     async _getData() {
         const params = {
             query: this._input.value,
@@ -52,6 +81,18 @@ export class IngredientInput {
         return await response.json();
     }
 
+    /**
+     * Conditionally update the autocomplete data.
+     *
+     * Update the data if at least 3 characters in the input were changed, added, or removed.
+     * Also update if more than 1.5 seconds have elapsed since the last input.
+     * Do not update if the current data still has enough matches to fill the autocomplete dropdown.
+     *
+     * These conditions are in place to conserve API quota limits.
+     *
+     * @param {string} value The value inputted by the user.
+     * @private
+     */
     _onInput(value) {
         if (value === this._lastInput) {
             return;
@@ -87,14 +128,46 @@ export class IngredientInput {
         }
     }
 
+    /**
+     * Save the user's autocompleted selection and hide the autocomplete dropdown.
+     *
+     * @param {Autocomplete~Selection} item The user's autocompleted ingredient selection.
+     * @private
+     */
     _onSelectItem(item) {
         this._selection = item;
         this._input.focus();
         this._autocomplete.dropdown.hide();
     }
+
+    /**
+     * A possible ingredient selection in the autocomplete dropdown menu.
+     *
+     * @typedef {Object} IngredientInput~Selection
+     *
+     * @property {string} label The ingredient's name
+     * @property {string} value The ingredient's image's file name.
+     */
+
+    /**
+     * Function to call when the ingredient input form is submitted.
+     *
+     * @callback IngredientInput~SubmitCallback
+     *
+     * @param {SubmitEvent} event The submit event that triggered the event listener.
+     * @param {IngredientInput~Selection} selection The user's last autocomplete selection.
+     */
 }
 
+/**
+ * Displays or removes inputted ingredients.
+ */
 export class IngredientManager {
+    /**
+     * Create an IngredientManager instance.
+     *
+     * @param {IngredientInput} input The object which manages the ingredient input form.
+     */
     constructor(input) {
         this.input = input;
         this.ingredients = new Set();
@@ -109,10 +182,23 @@ export class IngredientManager {
         };
     }
 
+    /**
+     * Set up event handlers for the ingredient input form.
+     *
+     * @param {HTMLFormElement} form The form to which to bind the IngredientInput.
+     */
     bind(form) {
         this.input.bind(form, this.add.bind(this));
     }
 
+    /**
+     * Add a new ingredient.
+     *
+     * Add the ingredient to the set and then display the new ingredient.
+     *
+     * @param {SubmitEvent} event The event triggered by the user adding the ingredient.
+     * @param {IngredientInput~Selection} selection The user's last autocomplete selection.
+     */
     add(event, selection) {
         if (this.input.element.value !== selection?.label) {
             // TODO: display error because the input doesn't match a selection.
@@ -128,6 +214,15 @@ export class IngredientManager {
         this.input.element.value = ""; // Clear the input bar.
     }
 
+    /**
+     * Display an ingredient.
+     *
+     * Display the ingredient's name with a remove button beside it.
+     *
+     * @param {string} name The name of the ingredient.
+     *
+     * @returns {HTMLElement} The node created to display the ingredient.
+     */
     show(name) {
         const template = document.getElementById("ingredient-template");
 
@@ -138,9 +233,15 @@ export class IngredientManager {
             .querySelector(".btn-close")
             .addEventListener("click", this.delete.bind(this));
 
-        return template.parentNode.appendChild(clone);
+        return template.parentElement.appendChild(clone);
     }
 
+    /**
+     * Create a bootstrap.Tooltip for the ingredient element.
+     *
+     * @param {HTMLElement} node The ingredient for which to add a tooltip.
+     * @param {string} image The file name of the ingredient's image.
+     */
     addToolTip(node, image) {
         // Initialise the tooltip for the new element.
         // Display the ingredient's image on hover.
@@ -162,11 +263,18 @@ export class IngredientManager {
         });
     }
 
+    /**
+     * Delete an ingredient.
+     *
+     * Remove the ingredient from the DOM and remove it from the set of ingredients.
+     *
+     * @param {MouseEvent} event The click event that triggered the deletion.
+     */
     delete(event) {
-        bootstrap.Tooltip.getInstance(event.target.parentNode).dispose();
+        bootstrap.Tooltip.getInstance(event.target.parentElement).dispose();
         this.ingredients.delete(
-            event.target.parentNode.firstElementChild.textContent
+            event.target.parentElement.firstElementChild.textContent
         );
-        event.target.parentNode.remove();
+        event.target.parentElement.remove();
     }
 }
