@@ -1,22 +1,18 @@
 import {RecipeModal} from "./modal.js";
 
 export class RecipeManager {
-    constructor(searchButtonId, missingButtonId, ingredientManager, apiClient) {
+    constructor(ingredientManager, apiClient) {
         this.ingredientManager = ingredientManager;
         this.api = apiClient;
 
-        this.searchButton = document.getElementById(searchButtonId);
-        this.missingButton = document.getElementById(missingButtonId);
-
-        this.modal = new RecipeModal(document.getElementById("recipe-modal"));
+        this.modal = undefined;
     }
 
-    bind() {
-        this.searchButton.addEventListener("click", this.search.bind(this));
-        this.missingButton.addEventListener(
-            "change",
-            this.toggleMissing.bind(this)
-        );
+    bind(searchButton, missingButton, modal) {
+        this.modal = new RecipeModal(modal);
+
+        searchButton.addEventListener("click", this.search.bind(this));
+        missingButton.addEventListener("change", this.toggleMissing.bind(this));
     }
 
     buildParams() {

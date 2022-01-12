@@ -9,10 +9,9 @@ const ingredientManager = new IngredientManager(input);
 ingredientManager.bind(document.querySelector("#form-ingredients"));
 
 // Dependency injection, wow!
-const recipeManager = new RecipeManager(
-    "button-search",
-    "check-recipe-hide",
-    ingredientManager,
-    client
+const recipeManager = new RecipeManager(ingredientManager, client);
+recipeManager.bind(
+    document.querySelector("#button-search"),
+    document.querySelector("#check-recipe-hide"),
+    document.querySelector("#recipe-modal")
 );
-recipeManager.bind();
