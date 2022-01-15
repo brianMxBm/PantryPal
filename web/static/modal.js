@@ -82,7 +82,9 @@ export class RecipeModal extends PaginatedModal {
      */
     constructor(element, config) {
         super(element, config);
+
         this._recipe = undefined;
+        this._ingredients = new Map();
 
         const radios = this._element.querySelectorAll("#radio-units input");
         for (const radio of radios) {
@@ -157,6 +159,7 @@ export class RecipeModal extends PaginatedModal {
     _fillIngredients() {
         const template = this._element.querySelector("#req-ingr-template");
         template.parentElement.replaceChildren(template);
+        this._ingredients.clear();
 
         for (const ingredient of this._recipe.extendedIngredients) {
             const node = this._createRequirement(
@@ -165,18 +168,8 @@ export class RecipeModal extends PaginatedModal {
                 "ingredients"
             );
 
-            // Save quantity strings in both units.
-            for (const unitType of ["metric", "us"]) {
-                const measure = ingredient.measures[unitType];
-                const amount = `${+measure.amount.toFixed(2)} `;
-                node.setAttribute(
-                    `data-${unitType}`,
-                    (amount + measure.unitShort).trim()
-                );
-            }
-
-            node.setAttribute("data-name", ingredient.name);
-            this._changeUnits(node);
+            this._ingredients.set(node, ingredient);
+            this._changeUnits(node, ingredient);
         }
     }
 
@@ -232,21 +225,21 @@ export class RecipeModal extends PaginatedModal {
      *
      * Toggle between metric and US units.
      *
-     * @param {HTMLElement} ingredient The element displaying the ingredient.
+     * @param {HTMLElement} element The element displaying the ingredient.
+     * @param {Ingredient} data The data for the ingredient.
      * @private
      */
-    _changeUnits(ingredient) {
+    _changeUnits(element, data) {
         const checked = this._element.querySelector(
             "#radio-units input:checked"
         );
         const unitType = checked.getAttribute("data-unit");
 
-        const quantity = ingredient.querySelector(".quantity");
-        quantity.textContent = ingredient.getAttribute(`data-${unitType}`);
+        const measure = data.measures[unitType];
+        const quantity = `${+measure.amount.toFixed(2)} ${measure.unitShort}`;
 
-        const image = ingredient.querySelector("img");
-        const name = ingredient.getAttribute("data-name");
-        image.title = `${quantity.textContent} ${name}`.trim();
+        element.querySelector(".quantity").textContent = quantity.trim();
+        element.querySelector("img").title = `${quantity} ${data.name}`.trim();
     }
 
     /**
@@ -263,9 +256,8 @@ export class RecipeModal extends PaginatedModal {
             return;
         }
 
-        const ingredients = this._element.querySelectorAll(".req-ingr");
-        for (const ingredient of ingredients) {
-            this._changeUnits(ingredient);
+        for (const [element, data] of this._ingredients) {
+            this._changeUnits(element, data);
         }
     }
 }
