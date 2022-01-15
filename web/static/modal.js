@@ -116,6 +116,7 @@ export class RecipeModal extends PaginatedModal {
             this._fillIngredients();
             this._fillEquipment();
             this._fillInstructions();
+            this._fillShoppingList();
 
             this.setPage(1);
         }
@@ -161,15 +162,32 @@ export class RecipeModal extends PaginatedModal {
         template.parentElement.replaceChildren(template);
         this._ingredients.clear();
 
-        for (const ingredient of this._recipe.extendedIngredients) {
-            const node = this._createRequirement(
-                ingredient,
-                template,
-                "ingredients"
-            );
+        for (const data of this._recipe.extendedIngredients) {
+            const ingredient = {
+                data: data,
+                element: this._createRequirement(data, template, "ingredients"),
+                listElement: undefined,
+            };
 
-            this._ingredients.set(node, ingredient);
-            this._changeUnits(node, ingredient);
+            this._ingredients.set(data.id, ingredient);
+            this._changeUnits(ingredient.element, data);
+        }
+    }
+
+    /**
+     * Fill the requirements page with a list of missing ingredients.
+     * @private
+     */
+    _fillShoppingList() {
+        const orderedList = this._element.querySelector("#req-shopping");
+        orderedList.replaceChildren();
+
+        for (const data of this._recipe.missedIngredients) {
+            const ingredient = this._ingredients.get(data.id);
+            ingredient.listElement = document.createElement("li");
+
+            this._changeShoppingUnits(ingredient.listElement, ingredient.data);
+            orderedList.appendChild(ingredient.listElement);
         }
     }
 
@@ -230,16 +248,24 @@ export class RecipeModal extends PaginatedModal {
      * @private
      */
     _changeUnits(element, data) {
-        const checked = this._element.querySelector(
-            "#radio-units input:checked"
-        );
-        const unitType = checked.getAttribute("data-unit");
-
-        const measure = data.measures[unitType];
-        const quantity = `${+measure.amount.toFixed(2)} ${measure.unitShort}`;
-
-        element.querySelector(".quantity").textContent = quantity.trim();
+        const quantity = this._getQuantityText(data);
+        element.querySelector(".quantity").textContent = quantity;
         element.querySelector("img").title = `${quantity} ${data.name}`.trim();
+    }
+
+    /**
+     * Change the units used to display the quantity of an ingredient in the shopping list.
+     *
+     * @param {HTMLElement} element The element displaying the ingredient in the shopping list.
+     * @param {Ingredient} data The data for the ingredient.
+     * @private
+     */
+    _changeShoppingUnits(element, data) {
+        const quantity = this._getQuantityText(data);
+        element.textContent = data.name;
+        if (quantity.length > 0) {
+            element.textContent += `, ${quantity}`.trim();
+        }
     }
 
     /**
@@ -256,8 +282,33 @@ export class RecipeModal extends PaginatedModal {
             return;
         }
 
-        for (const [element, data] of this._ingredients) {
-            this._changeUnits(element, data);
+        for (const ingredient of this._ingredients.values()) {
+            this._changeUnits(ingredient.element, ingredient.data);
+            if (ingredient.listElement !== undefined) {
+                this._changeShoppingUnits(
+                    ingredient.listElement,
+                    ingredient.data
+                );
+            }
         }
+    }
+
+    /**
+     * Get a string representation of an ingredient's quantity in the selected units.
+     *
+     * The units can be selected by the user by clicking on radio buttons.
+     *
+     * @param {Ingredient} ingredient The ingredient's information.
+     * @returns {string} A string representation of the quantity.
+     * @private
+     */
+    _getQuantityText(ingredient) {
+        const checked = this._element.querySelector(
+            "#radio-units input:checked"
+        );
+        const unitType = checked.getAttribute("data-unit");
+
+        const measure = ingredient.measures[unitType];
+        return `${+measure.amount.toFixed(2)} ${measure.unitShort}`.trim();
     }
 }
