@@ -1,8 +1,14 @@
 env:
     browser: true
     es6: true
+parser: "@typescript-eslint/parser"
+parserOptions:
+    project: ["./tsconfig.json"]
+plugins:
+    - "@typescript-eslint"
 extends:
-    - standard
-    - prettier
+    - "standard"
+    - "plugin:@typescript-eslint/recommended"
+    - "prettier"
 globals:
     bootstrap: readonly

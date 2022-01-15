@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "target": "es2015",
+        "module": "es2015",
+        "sourceMap": true,
+        "outDir": "./web/static/js",
+        "rootDir": "./web/static/ts",
+        "tsBuildInfoFile": "./web/static/js/tsconfig.tsbuildinfo",
+        "composite": true,
+        "incremental": true,
+        "importHelpers": false,
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true
+    }
+}
