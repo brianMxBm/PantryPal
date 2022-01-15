@@ -189,6 +189,9 @@ export class IngredientManager {
      */
     bind(form) {
         this.input.bind(form, this.add.bind(this));
+
+        // Delete all ingredients when the reset button is clicked.
+        form.addEventListener("reset", this.deleteAll.bind(this));
     }
 
     /**
@@ -231,7 +234,7 @@ export class IngredientManager {
         clone.firstElementChild.textContent = name;
         clone
             .querySelector(".btn-close")
-            .addEventListener("click", this.delete.bind(this));
+            .addEventListener("click", () => this.delete(clone));
 
         return template.parentElement.appendChild(clone);
     }
@@ -268,13 +271,26 @@ export class IngredientManager {
      *
      * Remove the ingredient from the DOM and remove it from the set of ingredients.
      *
-     * @param {MouseEvent} event The click event that triggered the deletion.
+     * @param {HTMLElement} element The element for the ingredient to delete.
      */
-    delete(event) {
-        bootstrap.Tooltip.getInstance(event.target.parentElement).dispose();
-        this.ingredients.delete(
-            event.target.parentElement.firstElementChild.textContent
+    delete(element) {
+        bootstrap.Tooltip.getInstance(element).dispose();
+        this.ingredients.delete(element.firstElementChild.textContent);
+        element.remove();
+    }
+
+    /**
+     * Delete all ingredients.
+     *
+     * @see delete
+     */
+    deleteAll() {
+        const ingredients = document.querySelectorAll(
+            ".ingredient:not(#ingredient-template)"
         );
-        event.target.parentElement.remove();
+
+        for (const ingredient of ingredients) {
+            this.delete(ingredient);
+        }
     }
 }
