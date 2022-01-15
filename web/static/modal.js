@@ -1,4 +1,15 @@
-export class PaginatedModal extends bootstrap.Modal {
+/**
+ * A Bootstrap Modal with different pages for the body.
+ *
+ * Expects a Bootstrap pagination component in the modal's footer.
+ */
+ export class PaginatedModal extends bootstrap.Modal {
+    /**
+     * Create a PaginatedModal instance.
+     *
+     * @param {HTMLElement} element The element for the modal.
+     * @param {Object} config The configuration for the Bootstrap Modal.
+     */
     constructor(element, config) {
         super(element, config);
         this._pageLinks = [];
@@ -12,6 +23,12 @@ export class PaginatedModal extends bootstrap.Modal {
         }
     }
 
+    /**
+     * Set the active page of the modal based on a provided anchor element.
+     *
+     * @param {HTMLAnchorElement} target
+     * @private
+     */
     _setPage(target) {
         const activeLink = this._element.querySelector(
             ".modal-footer .page-item.active .page-link"
@@ -35,12 +52,34 @@ export class PaginatedModal extends bootstrap.Modal {
         target.parentElement.classList.add("active");
     }
 
+    /**
+     * Set the active page of the modal based on the page number.
+     *
+     * @param {number} pageNum The page number to make active (starts at 1).
+     */
     setPage(pageNum) {
         this._setPage(this._pageLinks[pageNum - 1]);
     }
 }
 
+/**
+ * A paginated modal for displaying recipe details.
+ *
+ * Has three pages:
+ * 1. Summary
+ * 2. Requirements
+ * 3. Instructions
+ *
+ * The requirements page displays both ingredients and equipment.
+ * The ingredient's units can be toggled between US and metric.
+ */
 export class RecipeModal extends PaginatedModal {
+    /**
+     * Create a RecipeModal instance.
+     *
+     * @param {HTMLElement} element The element for the modal.
+     * @param {Object} config The configuration for the Bootstrap Modal.
+     */
     constructor(element, config) {
         super(element, config);
         this._prevRecipeID = undefined;
@@ -51,10 +90,22 @@ export class RecipeModal extends PaginatedModal {
         }
     }
 
+    /**
+     * Manually toggles opening the modal with details for the given recipe.
+     *
+     * @param {HTMLElement} relatedTarget An element to pass to the modal's events.
+     * @param {Recipe} recipe The recipe for which to display details.
+     */
     toggle(relatedTarget, recipe) {
-        return this._isShown ? this.hide() : this.show(relatedTarget, recipe);
+        this._isShown ? this.hide() : this.show(relatedTarget, recipe);
     }
 
+    /**
+     * Manually opens the modal with details for the given recipe.
+     *
+     * @param {HTMLElement} relatedTarget An element to pass to the modal's events.
+     * @param {Recipe} recipe The recipe for which to display details.
+     */
     show(relatedTarget, recipe) {
         if (this._prevRecipeID !== recipe.id) {
             this._fillSummary(recipe);
@@ -66,15 +117,27 @@ export class RecipeModal extends PaginatedModal {
         }
 
         this._prevRecipeID = recipe.id;
-        return super.show(relatedTarget);
+        super.show(relatedTarget);
     }
 
+    /**
+     * Fill the summary page with the summary and image of the given recipe.
+     *
+     * @param {Recipe} recipe The recipe for which to display a summary.
+     * @private
+     */
     _fillSummary(recipe) {
         this._element.querySelector(".modal-title").textContent = recipe.title;
         this._element.querySelector("#summary").innerHTML = recipe.summary;
         this._element.querySelector("#summary-img").src = recipe.image;
     }
 
+    /**
+     * Fill the instructions page with instructions for the given recipe.
+     *
+     * @param {Recipe} recipe The recipe for which to display instructions.
+     * @private
+     */
     _fillInstructions(recipe) {
         const orderedList = this._element.querySelector("#instructions");
         orderedList.replaceChildren();
@@ -88,6 +151,12 @@ export class RecipeModal extends PaginatedModal {
         }
     }
 
+    /**
+     * Fill the requirements page with ingredients for the given recipe.
+     *
+     * @param {Recipe} recipe The recipe for which to display ingredients.
+     * @private
+     */
     _fillIngredients(recipe) {
         const template = this._element.querySelector("#req-ingr-template");
         template.parentElement.replaceChildren(template);
@@ -114,6 +183,12 @@ export class RecipeModal extends PaginatedModal {
         }
     }
 
+    /**
+     * Fill the requirements page with equipment for the given recipe.
+     *
+     * @param {Recipe} recipe The recipe for which to display equipment.
+     * @private
+     */
     _fillEquipment(recipe) {
         const template = this._element.querySelector("#req-equip-template");
         template.parentElement.replaceChildren(template);
@@ -132,6 +207,15 @@ export class RecipeModal extends PaginatedModal {
         }
     }
 
+    /**
+     * Create an element containing a recipe requirement's information.
+     *
+     * @param {Requirement} data The requirement's information.
+     * @param {Node} template The template to use for the element that displays the requirement.
+     * @param {string} type The name of the requirement type; used to create the image URL.
+     * @returns {HTMLElement} The node created to display the requirement.
+     * @private
+     */
     _createRequirement(data, template, type) {
         const clone = template.cloneNode(true);
         clone.id = `req-${type}-${data.id}`;
@@ -148,6 +232,14 @@ export class RecipeModal extends PaginatedModal {
         return clone;
     }
 
+    /**
+     * Change the units used to display the ingredient's quantity.
+     *
+     * Toggle between metric and US units.
+     *
+     * @param {HTMLElement} ingredient The element displaying the ingredient.
+     * @private
+     */
     _changeUnits(ingredient) {
         const checked = this._element.querySelector(
             "#radio-units input:checked"
@@ -162,6 +254,15 @@ export class RecipeModal extends PaginatedModal {
         image.title = `${quantity.textContent} ${name}`.trim();
     }
 
+    /**
+     * Change the units used to display the all ingredients' quantities.
+     *
+     * Toggle between metric and US units.
+     *
+     * @param {Object} event The event that triggered the radio button.
+     * @see _changeUnits
+     * @private
+     */
     _changeAllUnits(event) {
         if (!event.target.checked) {
             return;

@@ -1,20 +1,6 @@
 import {RecipeModal} from "./modal.js";
 
 /**
- * Recipe data from the Spoonacular API.
- *
- * @typedef {Object} Recipe
- * @property {number} id A unique identifier.
- * @property {string} title The recipe's title.
- * @property {string} image The recipe's image URL.
- * @property {number} missedIngredientCount
- *      The difference between the required ingredients and the user's ingredients.
- * @property {number} healthScore A percentage value indicating how healthy the recipe is.
- * @property {number} readyInMinutes The time in minutes for the recipe to be ready.
- * @property {number} pricePerServing The price per serving of the recipe in US cents.
- */
-
-/**
  * Searches for recipes based on ingredients and displays recipe results & details.
  */
 export class RecipeManager {
