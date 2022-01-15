@@ -82,7 +82,7 @@ export class RecipeModal extends PaginatedModal {
      */
     constructor(element, config) {
         super(element, config);
-        this._prevRecipeID = undefined;
+        this._recipe = undefined;
 
         const radios = this._element.querySelectorAll("#radio-units input");
         for (const radio of radios) {
@@ -107,42 +107,41 @@ export class RecipeModal extends PaginatedModal {
      * @param {Recipe} recipe The recipe for which to display details.
      */
     show(relatedTarget, recipe) {
-        if (this._prevRecipeID !== recipe.id) {
-            this._fillSummary(recipe);
-            this._fillIngredients(recipe);
-            this._fillEquipment(recipe);
-            this._fillInstructions(recipe);
+        if (this._recipe?.id !== recipe.id) {
+            this._recipe = recipe;
+
+            this._fillSummary();
+            this._fillIngredients();
+            this._fillEquipment();
+            this._fillInstructions();
 
             this.setPage(1);
         }
 
-        this._prevRecipeID = recipe.id;
         super.show(relatedTarget);
     }
 
     /**
      * Fill the summary page with the summary and image of the given recipe.
-     *
-     * @param {Recipe} recipe The recipe for which to display a summary.
      * @private
      */
-    _fillSummary(recipe) {
-        this._element.querySelector(".modal-title").textContent = recipe.title;
-        this._element.querySelector("#summary").innerHTML = recipe.summary;
-        this._element.querySelector("#summary-img").src = recipe.image;
+    _fillSummary() {
+        this._element.querySelector(".modal-title").textContent =
+            this._recipe.title;
+        this._element.querySelector("#summary").innerHTML =
+            this._recipe.summary;
+        this._element.querySelector("#summary-img").src = this._recipe.image;
     }
 
     /**
      * Fill the instructions page with instructions for the given recipe.
-     *
-     * @param {Recipe} recipe The recipe for which to display instructions.
      * @private
      */
-    _fillInstructions(recipe) {
+    _fillInstructions() {
         const orderedList = this._element.querySelector("#instructions");
         orderedList.replaceChildren();
 
-        for (const instructions of recipe.analyzedInstructions) {
+        for (const instructions of this._recipe.analyzedInstructions) {
             for (const step of instructions.steps) {
                 const listItem = document.createElement("li");
                 listItem.textContent = step.step;
@@ -153,15 +152,13 @@ export class RecipeModal extends PaginatedModal {
 
     /**
      * Fill the requirements page with ingredients for the given recipe.
-     *
-     * @param {Recipe} recipe The recipe for which to display ingredients.
      * @private
      */
-    _fillIngredients(recipe) {
+    _fillIngredients() {
         const template = this._element.querySelector("#req-ingr-template");
         template.parentElement.replaceChildren(template);
 
-        for (const ingredient of recipe.extendedIngredients) {
+        for (const ingredient of this._recipe.extendedIngredients) {
             const node = this._createRequirement(
                 ingredient,
                 template,
@@ -185,17 +182,15 @@ export class RecipeModal extends PaginatedModal {
 
     /**
      * Fill the requirements page with equipment for the given recipe.
-     *
-     * @param {Recipe} recipe The recipe for which to display equipment.
      * @private
      */
-    _fillEquipment(recipe) {
+    _fillEquipment() {
         const template = this._element.querySelector("#req-equip-template");
         template.parentElement.replaceChildren(template);
 
         const seen = new Set(); // Used to skip duplicate equipment.
 
-        for (const instructions of recipe.analyzedInstructions) {
+        for (const instructions of this._recipe.analyzedInstructions) {
             for (const step of instructions.steps) {
                 for (const equip of step.equipment) {
                     if (!seen.has(equip.id)) {
