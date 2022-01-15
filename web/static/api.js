@@ -6,7 +6,7 @@
      * Create a URL for an endpoint with the given query parameters.
      *
      * @param {string} endpoint The API endpoint.
-     * @param {string} params The query parameters.
+     * @param {Object} params The query parameters.
      * @returns {URL} The built URL.
      * @private
      */
