@@ -211,9 +211,9 @@ export class RecipeModal extends PaginatedModal {
      * Create an element containing a recipe requirement's information.
      *
      * @param {Requirement} data The requirement's information.
-     * @param {Node} template The template to use for the element that displays the requirement.
+     * @param {HTMLElement} template The template element to use for displaying the requirement.
      * @param {string} type The name of the requirement type; used to create the image URL.
-     * @returns {HTMLElement} The node created to display the requirement.
+     * @returns {HTMLElement} The element created to display the requirement.
      * @private
      */
     _createRequirement(data, template, type) {
