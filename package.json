@@ -1,5 +1,9 @@
 {
+  "devDependencies": {
+      "typescript": "^4.3.5"
+  },
   "dependencies": {
-    "typescript": "^4.3.5"
+      "@types/bootstrap": "^5.0.16",
+      "bootstrap": "^5.0.2"
   }
 }
