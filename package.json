@@ -4,6 +4,8 @@
   },
   "dependencies": {
       "@types/bootstrap": "^5.0.16",
-      "bootstrap": "^5.0.2"
+      "@types/js-levenshtein": "^1.1.0",
+      "bootstrap": "^5.0.2",
+      "js-levenshtein": "^1.1.6"
   }
 }
