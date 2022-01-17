@@ -1,12 +1,14 @@
 import {BaseObservable} from "../observe.js";
 import {KeyError} from "../errors.js";
+import {Client} from "../api.js";
+import {Selection} from "../libs/autocomplete.js";
 
 export interface UserIngredient {
     readonly name: string;
     readonly image: string;
 }
 
-export class UserIngredientDiff {
+export class SelectionsDiff {
     public readonly ingredient: UserIngredient;
     public readonly deleted: boolean;
 
@@ -16,7 +18,8 @@ export class UserIngredientDiff {
     }
 }
 
-export class UserIngredients extends BaseObservable<UserIngredientDiff> {
+export class SelectedIngredients extends BaseObservable<SelectionsDiff> {
+    public lastSelection?: Selection = undefined;
     private _ingredients: Map<string, UserIngredient>;
 
     constructor() {
@@ -30,7 +33,7 @@ export class UserIngredients extends BaseObservable<UserIngredientDiff> {
 
     add(ingredient: UserIngredient): void {
         this._ingredients.set(ingredient.name, ingredient);
-        this.notify(new UserIngredientDiff(ingredient));
+        this.notify(new SelectionsDiff(ingredient));
     }
 
     delete(name: string): void {
@@ -40,12 +43,47 @@ export class UserIngredients extends BaseObservable<UserIngredientDiff> {
         }
 
         this._ingredients.delete(name);
-        this.notify(new UserIngredientDiff(ingredient, true));
+        this.notify(new SelectionsDiff(ingredient, true));
     }
 
-    notify(diff: UserIngredientDiff): void {
-        for (const observer of this._observers) {
-            observer.update(diff);
+    deleteLastSelection(): void {
+        if (this.lastSelection === undefined) {
+            throw new TypeError(
+                "Cannot delete last selection: nothing has been selected yet."
+            );
         }
+
+        this.delete(this.lastSelection.label);
+    }
+}
+
+export class IngredientForm extends BaseObservable<UserIngredient[]> {
+    private readonly _api: Client;
+    private _data: UserIngredient[] = [];
+
+    constructor(apiClient: Client) {
+        super();
+        this._api = apiClient;
+    }
+
+    get data() {
+        return this._data;
+    }
+
+    set data(value: UserIngredient[]) {
+        this._data = value;
+        this.notify(this._data);
+    }
+
+    public async update(query: string): Promise<void> {
+        const params = {
+            query: query,
+            number: 100,
+        };
+
+        // TODO: check the returned status code.
+        // TODO: check for empty input.
+        const response = await this._api.get("ingredients", params);
+        this.data = await response.json();
     }
 }
