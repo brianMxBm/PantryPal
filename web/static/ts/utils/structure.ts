@@ -1,4 +1,4 @@
-import {NonUndefinedProps} from "./type.js";
+import {NonUndefinedProps} from "./type";
 
 export function removeUndefined<T>(obj: T): NonUndefinedProps<T> {
     const ret: Record<string, any> = {};

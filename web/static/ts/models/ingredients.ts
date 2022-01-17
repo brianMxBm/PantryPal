@@ -1,7 +1,7 @@
-import {BaseObservable} from "../observe.js";
-import {KeyError} from "../errors.js";
-import {Client} from "../api.js";
-import {Selection} from "../libs/autocomplete.js";
+import {BaseObservable} from "../observe";
+import {KeyError} from "../errors";
+import {Client} from "../api";
+import {Selection} from "../libs/autocomplete";
 
 export interface UserIngredient {
     readonly name: string;

@@ -1,7 +1,7 @@
-import {IObserver} from "../observe.js";
-import {Autocomplete, Options, Selection} from "../libs/autocomplete.js";
-import {IngredientFormController} from "../controllers/ingredients.js";
-import {UserIngredient} from "../models/ingredients.js";
+import {IObserver} from "../observe";
+import {Autocomplete, Options, Selection} from "../libs/autocomplete";
+import {IngredientFormController} from "../controllers/ingredients";
+import {UserIngredient} from "../models/ingredients";
 
 export class IngredientFormView implements IObserver<UserIngredient[]> {
     private readonly _controller: IngredientFormController;

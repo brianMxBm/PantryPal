@@ -1,6 +1,6 @@
-import {CreateImmutable, MandateProps} from "../utils/type.js";
-import {removeUndefined} from "../utils/structure.js";
-import {ce, insertAfter} from "../utils/dom.js";
+import {CreateImmutable, MandateProps} from "../utils/type";
+import {removeUndefined} from "../utils/structure";
+import {ce, insertAfter} from "../utils/dom";
 import {Dropdown} from "bootstrap";
 
 export interface Selection {

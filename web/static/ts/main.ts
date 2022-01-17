@@ -1,7 +1,7 @@
-import {Client} from "./api.js";
-import {IngredientForm, SelectedIngredients} from "./models/ingredients.js";
-import {IngredientFormController} from "./controllers/ingredients.js";
-import {IngredientFormView} from "./views/ingredients.js";
+import {Client} from "./api";
+import {IngredientForm, SelectedIngredients} from "./models/ingredients";
+import {IngredientFormController} from "./controllers/ingredients";
+import {IngredientFormView} from "./views/ingredients";
 
 const client = new Client();
 

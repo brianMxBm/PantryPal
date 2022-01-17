@@ -1,5 +1,5 @@
-import {IngredientForm, SelectedIngredients} from "../models/ingredients.js";
-import {Selection} from "../libs/autocomplete.js";
+import {IngredientForm, SelectedIngredients} from "../models/ingredients";
+import {Selection} from "../libs/autocomplete";
 import levenshtein from "js-levenshtein";
 
 export class IngredientFormController {
