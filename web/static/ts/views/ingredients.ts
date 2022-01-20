@@ -30,14 +30,16 @@ export class IngredientFormView implements IObserver<UserIngredient[]> {
         };
         this._autocomplete = new Autocomplete(this._input, this._acOptions);
 
-        form.addEventListener(
-            "submit",
-            this._controller.onSubmit.bind(this._controller)
-        );
+        form.addEventListener("submit", this._onSubmit.bind(this));
     }
 
     public update(message: UserIngredient[]): void {
         this._autocomplete.data = message;
+    }
+
+    private _onSubmit(event: Event) {
+        this._input.value = "";
+        this._controller.onSubmit(event);
     }
 
     private _onInput(value: string) {
