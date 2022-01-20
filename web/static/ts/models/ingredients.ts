@@ -1,7 +1,6 @@
 import {BaseObservable} from "../observe";
 import {KeyError} from "../errors";
 import {Client} from "../api";
-import {Selection} from "../libs/autocomplete";
 
 export interface UserIngredient {
     readonly name: string;
@@ -19,7 +18,7 @@ export class SelectionsDiff {
 }
 
 export class SelectedIngredients extends BaseObservable<SelectionsDiff> {
-    public lastSelection?: Selection = undefined;
+    public lastSelection?: UserIngredient = undefined;
     private _ingredients: Map<string, UserIngredient>;
 
     constructor() {
@@ -53,7 +52,7 @@ export class SelectedIngredients extends BaseObservable<SelectionsDiff> {
             );
         }
 
-        this.delete(this.lastSelection.label);
+        this.delete(this.lastSelection.name);
     }
 }
 

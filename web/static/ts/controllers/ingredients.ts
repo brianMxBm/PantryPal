@@ -53,7 +53,10 @@ export class IngredientFormController {
     }
 
     public onSelectItem(item: Selection) {
-        this._selectionsModel.lastSelection = item;
+        this._selectionsModel.lastSelection = {
+            name: item.label,
+            image: item.value,
+        };
     }
 
     public onSubmit(event: Event) {
