@@ -157,7 +157,7 @@ export class Autocomplete {
 
         if (dataLabel === null || dataValue === null) {
             throw new TypeError(
-                "Clicked item's label or label data attributes don't exist."
+                "Clicked item's label or value data attributes don't exist."
             );
         }
 
