@@ -67,6 +67,7 @@ instance/
 # JavaScript
 node_modules/
 web/static/js/
+web/static/dist/
 *.tsbuildinfo
 *.d.ts
 

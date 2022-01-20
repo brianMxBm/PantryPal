@@ -10,5 +10,10 @@ extends:
     - "standard"
     - "plugin:@typescript-eslint/recommended"
     - "prettier"
+overrides:
+    - files:
+          - "webpack.*.js"
+      rules:
+          "@typescript-eslint/no-var-requires": off
 globals:
     bootstrap: readonly
