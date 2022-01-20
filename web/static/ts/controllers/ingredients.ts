@@ -61,6 +61,6 @@ export class IngredientFormController {
 
     public onSubmit(event: Event) {
         event.preventDefault();
-        this._selectionsModel.deleteLastSelection();
+        this._selectionsModel.addSelection();
     }
 }

@@ -31,6 +31,7 @@ export class SelectedIngredients extends BaseObservable<SelectionsDiff> {
     }
 
     add(ingredient: UserIngredient): void {
+        // TODO: check for duplicates and notify an error instead.
         this._ingredients.set(ingredient.name, ingredient);
         this.notify(new SelectionsDiff(ingredient));
     }
@@ -43,6 +44,16 @@ export class SelectedIngredients extends BaseObservable<SelectionsDiff> {
 
         this._ingredients.delete(name);
         this.notify(new SelectionsDiff(ingredient, true));
+    }
+
+    addSelection(): void {
+        if (this.lastSelection === undefined) {
+            throw new TypeError(
+                "Cannot add last selection: nothing has been selected yet."
+            );
+        }
+
+        this.add(this.lastSelection);
     }
 
     deleteLastSelection(): void {
