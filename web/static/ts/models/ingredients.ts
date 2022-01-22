@@ -1,5 +1,6 @@
 import {BaseObservable} from "../observe";
 import {KeyError} from "../errors";
+import {IngredientWarning, IngredientError, Alert} from "../alerts";
 import {Client} from "../api";
 
 export interface UserIngredient {
@@ -10,16 +11,16 @@ export interface UserIngredient {
 export class SelectionsDiff {
     public readonly added: UserIngredient[];
     public readonly deleted: UserIngredient[];
-    public readonly errors: Error[];
+    public readonly alerts: Alert[];
 
     constructor(diff: {
         added?: UserIngredient[];
         deleted?: UserIngredient[];
-        errors?: Error[];
+        alerts?: Alert[];
     }) {
         this.added = diff.added ?? [];
         this.deleted = diff.deleted ?? [];
-        this.errors = diff.errors ?? [];
+        this.alerts = diff.alerts ?? [];
     }
 }
 
@@ -37,9 +38,15 @@ export class SelectedIngredients extends BaseObservable<SelectionsDiff> {
     }
 
     add(ingredient: UserIngredient): void {
-        // TODO: check for duplicates and notify an error instead.
-        this._ingredients.set(ingredient.name, ingredient);
-        this.notify(new SelectionsDiff({added: [ingredient]}));
+        if (this._ingredients.has(ingredient.name)) {
+            const alert = new IngredientWarning(
+                `Ingredient '${ingredient.name}' was already selected.`
+            );
+            this.notify(new SelectionsDiff({alerts: [alert]}));
+        } else {
+            this._ingredients.set(ingredient.name, ingredient);
+            this.notify(new SelectionsDiff({added: [ingredient]}));
+        }
     }
 
     delete(name: string): void {
@@ -52,14 +59,21 @@ export class SelectedIngredients extends BaseObservable<SelectionsDiff> {
         this.notify(new SelectionsDiff({deleted: [ingredient]}));
     }
 
-    addSelection(): void {
+    addSelection(input: string): void {
         if (this.lastSelection === undefined) {
             throw new TypeError(
                 "Cannot add last selection: nothing has been selected yet."
             );
         }
 
-        this.add(this.lastSelection);
+        if (input !== this.lastSelection.name) {
+            const alert = new IngredientError(
+                "A selection must be made from autocompletion."
+            );
+            this.notify(new SelectionsDiff({alerts: [alert]}));
+        } else {
+            this.add(this.lastSelection);
+        }
     }
 
     clear(): void {
