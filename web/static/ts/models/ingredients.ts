@@ -56,14 +56,10 @@ export class SelectedIngredients extends BaseObservable<SelectionsDiff> {
         this.add(this.lastSelection);
     }
 
-    deleteLastSelection(): void {
-        if (this.lastSelection === undefined) {
-            throw new TypeError(
-                "Cannot delete last selection: nothing has been selected yet."
-            );
+    clear(): void {
+        for (const name of this._ingredients.keys()) {
+            this.delete(name);
         }
-
-        this.delete(this.lastSelection.name);
     }
 }
 

@@ -73,7 +73,7 @@ export class SelectedIngredientsController {
     }
 
     public onReset(event: Event) {
-        this._model.deleteLastSelection();
+        this._model.clear();
     }
 
     public onDelete(name: string) {
