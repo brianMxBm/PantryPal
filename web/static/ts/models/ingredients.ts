@@ -8,12 +8,18 @@ export interface UserIngredient {
 }
 
 export class SelectionsDiff {
-    public readonly ingredient: UserIngredient;
-    public readonly deleted: boolean;
+    public readonly added: UserIngredient[];
+    public readonly deleted: UserIngredient[];
+    public readonly errors: Error[];
 
-    constructor(ingredient: UserIngredient, deleted: boolean = false) {
-        this.ingredient = ingredient;
-        this.deleted = deleted;
+    constructor(diff: {
+        added?: UserIngredient[];
+        deleted?: UserIngredient[];
+        errors?: Error[];
+    }) {
+        this.added = diff.added ?? [];
+        this.deleted = diff.deleted ?? [];
+        this.errors = diff.errors ?? [];
     }
 }
 
@@ -33,7 +39,7 @@ export class SelectedIngredients extends BaseObservable<SelectionsDiff> {
     add(ingredient: UserIngredient): void {
         // TODO: check for duplicates and notify an error instead.
         this._ingredients.set(ingredient.name, ingredient);
-        this.notify(new SelectionsDiff(ingredient));
+        this.notify(new SelectionsDiff({added: [ingredient]}));
     }
 
     delete(name: string): void {
@@ -43,7 +49,7 @@ export class SelectedIngredients extends BaseObservable<SelectionsDiff> {
         }
 
         this._ingredients.delete(name);
-        this.notify(new SelectionsDiff(ingredient, true));
+        this.notify(new SelectionsDiff({deleted: [ingredient]}));
     }
 
     addSelection(): void {
@@ -57,9 +63,12 @@ export class SelectedIngredients extends BaseObservable<SelectionsDiff> {
     }
 
     clear(): void {
-        for (const name of this._ingredients.keys()) {
-            this.delete(name);
-        }
+        this.notify(
+            new SelectionsDiff({
+                deleted: Array.from(this._ingredients.values()),
+            })
+        );
+        this._ingredients.clear();
     }
 }
 

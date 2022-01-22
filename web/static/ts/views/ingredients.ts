@@ -85,10 +85,12 @@ export class SelectedIngredientsView implements IObserver<SelectionsDiff> {
     }
 
     public update(diff: SelectionsDiff): void {
-        if (diff.deleted) {
-            this._delete(diff.ingredient);
-        } else {
-            this._add(diff.ingredient);
+        for (const ingredient of diff.deleted) {
+            this._delete(ingredient);
+        }
+
+        for (const ingredient of diff.added) {
+            this._add(ingredient);
         }
     }
 
