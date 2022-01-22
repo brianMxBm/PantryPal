@@ -59,9 +59,9 @@ export class IngredientFormController {
         };
     }
 
-    public onSubmit(event: Event) {
+    public onSubmit(event: Event, input: string) {
         event.preventDefault();
-        this._selectionsModel.addSelection(this._lastInput);
+        this._selectionsModel.addSelection(input);
     }
 }
 

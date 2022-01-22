@@ -42,8 +42,8 @@ export class IngredientFormView implements IObserver<UserIngredient[]> {
     }
 
     private _onSubmit(event: Event) {
+        this._controller.onSubmit(event, this._input.value);
         this._input.value = "";
-        this._controller.onSubmit(event);
     }
 
     private _onInput(value: string) {
