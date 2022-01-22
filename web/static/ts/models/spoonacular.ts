@@ -4,6 +4,11 @@ export interface FailureResponse {
     readonly message: string;
 }
 
+export interface AutocompleteIngredient {
+    readonly name: string;
+    readonly image: string;
+}
+
 export interface RecipeSearchResults {
     readonly results: Recipe[];
     readonly offset: number;

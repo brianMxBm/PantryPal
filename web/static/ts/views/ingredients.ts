@@ -4,10 +4,11 @@ import {
     IngredientFormController,
     SelectedIngredientsController,
 } from "../controllers/ingredients";
-import {SelectionsDiff, UserIngredient} from "../models/ingredients";
+import {SelectionsDiff} from "../models/ingredients";
 import {Tooltip} from "bootstrap";
+import {AutocompleteIngredient} from "../models/spoonacular";
 
-export class IngredientFormView implements IObserver<UserIngredient[]> {
+export class IngredientFormView implements IObserver<AutocompleteIngredient[]> {
     private readonly _controller: IngredientFormController;
     private readonly _autocomplete: Autocomplete;
     private readonly _acOptions: Options;
@@ -37,7 +38,7 @@ export class IngredientFormView implements IObserver<UserIngredient[]> {
         form.addEventListener("submit", this._onSubmit.bind(this));
     }
 
-    public update(message: UserIngredient[]): void {
+    public update(message: AutocompleteIngredient[]): void {
         this._autocomplete.data = message;
     }
 
@@ -94,13 +95,13 @@ export class SelectedIngredientsView implements IObserver<SelectionsDiff> {
         }
     }
 
-    private _add(ingredient: UserIngredient) {
+    private _add(ingredient: AutocompleteIngredient) {
         const element = this._createElement(ingredient.name);
         this._addTooltip(element, ingredient.image || "no.png");
         this._elements.set(ingredient.name, element);
     }
 
-    private _delete(ingredient: UserIngredient) {
+    private _delete(ingredient: AutocompleteIngredient) {
         const element = this._elements.get(ingredient.name);
         if (element === undefined) {
             // Assume it has already been deleted somehow.

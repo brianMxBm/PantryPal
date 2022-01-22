@@ -2,20 +2,16 @@ import {BaseObservable} from "../observe";
 import {KeyError} from "../errors";
 import {IngredientWarning, IngredientError, Alert} from "../alerts";
 import {Client} from "../api";
-
-export interface UserIngredient {
-    readonly name: string;
-    readonly image: string;
-}
+import {AutocompleteIngredient} from "./spoonacular";
 
 export class SelectionsDiff {
-    public readonly added: UserIngredient[];
-    public readonly deleted: UserIngredient[];
+    public readonly added: AutocompleteIngredient[];
+    public readonly deleted: AutocompleteIngredient[];
     public readonly alerts: Alert[];
 
     constructor(diff: {
-        added?: UserIngredient[];
-        deleted?: UserIngredient[];
+        added?: AutocompleteIngredient[];
+        deleted?: AutocompleteIngredient[];
         alerts?: Alert[];
     }) {
         this.added = diff.added ?? [];
@@ -25,19 +21,19 @@ export class SelectionsDiff {
 }
 
 export class SelectedIngredients extends BaseObservable<SelectionsDiff> {
-    public lastSelection?: UserIngredient = undefined;
-    private _ingredients: Map<string, UserIngredient>;
+    public lastSelection?: AutocompleteIngredient = undefined;
+    private _ingredients: Map<string, AutocompleteIngredient>;
 
     constructor() {
         super();
         this._ingredients = new Map();
     }
 
-    get ingredients(): IterableIterator<UserIngredient> {
+    get ingredients(): IterableIterator<AutocompleteIngredient> {
         return this._ingredients.values();
     }
 
-    add(ingredient: UserIngredient): void {
+    add(ingredient: AutocompleteIngredient): void {
         if (this._ingredients.has(ingredient.name)) {
             const alert = new IngredientWarning(
                 `Ingredient '${ingredient.name}' was already selected.`
@@ -86,9 +82,9 @@ export class SelectedIngredients extends BaseObservable<SelectionsDiff> {
     }
 }
 
-export class IngredientForm extends BaseObservable<UserIngredient[]> {
+export class IngredientForm extends BaseObservable<AutocompleteIngredient[]> {
     private readonly _api: Client;
-    private _data: UserIngredient[] = [];
+    private _data: AutocompleteIngredient[] = [];
 
     constructor(apiClient: Client) {
         super();
@@ -99,7 +95,7 @@ export class IngredientForm extends BaseObservable<UserIngredient[]> {
         return this._data;
     }
 
-    set data(value: UserIngredient[]) {
+    set data(value: AutocompleteIngredient[]) {
         this._data = value;
         this.notify(this._data);
     }
