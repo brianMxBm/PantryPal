@@ -1,6 +1,6 @@
 import {BaseObservable} from "../observe";
 import {KeyError} from "../errors";
-import {IngredientWarning, IngredientError, Alert} from "../alerts";
+import {Alert, ErrorAlert, WarningAlert} from "../alerts";
 import {Client} from "../api";
 import {AutocompleteIngredient} from "./spoonacular";
 
@@ -35,7 +35,7 @@ export class SelectedIngredients extends BaseObservable<SelectionsDiff> {
 
     add(ingredient: AutocompleteIngredient): void {
         if (this._ingredients.has(ingredient.name)) {
-            const alert = new IngredientWarning(
+            const alert = new WarningAlert(
                 `Ingredient '${ingredient.name}' was already selected.`
             );
             this.notify(new SelectionsDiff({alerts: [alert]}));
@@ -63,7 +63,7 @@ export class SelectedIngredients extends BaseObservable<SelectionsDiff> {
         }
 
         if (input !== this.lastSelection.name) {
-            const alert = new IngredientError(
+            const alert = new ErrorAlert(
                 "A selection must be made from autocompletion."
             );
             this.notify(new SelectionsDiff({alerts: [alert]}));
@@ -106,8 +106,6 @@ export class IngredientForm extends BaseObservable<AutocompleteIngredient[]> {
             number: 100,
         };
 
-        // TODO: check the returned status code.
-        // TODO: check for empty input.
         const response = await this._api.get("ingredients", params);
         this.data = await response.json();
     }

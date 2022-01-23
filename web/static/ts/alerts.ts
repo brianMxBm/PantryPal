@@ -24,7 +24,3 @@ export class ErrorAlert extends Alert {
         super(message, Severity.ERROR);
     }
 }
-
-export class IngredientWarning extends ErrorAlert {}
-
-export class IngredientError extends WarningAlert {}
