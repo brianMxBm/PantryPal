@@ -8,6 +8,8 @@ import {IngredientFormView, SelectedIngredientsView} from "./views/ingredients";
 import {Recipes} from "./models/recipes";
 import {RecipesController} from "./controllers/recipes";
 import {RecipesView} from "./views/recipes";
+import "./bootstrap";
+import "../style.css";
 
 const client = new Client();
 
