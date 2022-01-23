@@ -137,3 +137,4 @@ def test_rate_limits(client, requests_mock, endpoint):
 
     res = client.open(flask.url_for(endpoint.name), method=endpoint.method)
     assert res.status_code == 429
+    assert res.headers["Retry-After"] == "120"
