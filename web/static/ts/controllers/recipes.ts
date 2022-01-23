@@ -12,11 +12,12 @@ export class RecipesController {
 
     public async onSearch(
         sort: string,
-        cuisine: string,
+        cuisines: string[],
         type: string,
         maxReadyTime: string
     ): Promise<void> {
         const ingred = Array.from(this._ingredients.ingredients).join(",");
+        const cuisine = cuisines.join(",");
         await this._recipes.update(ingred, sort, cuisine, type, maxReadyTime);
     }
 }
