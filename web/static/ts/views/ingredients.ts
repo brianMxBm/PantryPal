@@ -7,8 +7,11 @@ import {
 import {SelectionsDiff} from "../models/ingredients";
 import {Tooltip} from "bootstrap";
 import {AutocompleteIngredient} from "../models/spoonacular";
+import {Message} from "../observe";
 
-export class IngredientFormView implements IObserver<AutocompleteIngredient[]> {
+export class IngredientFormView
+    implements IObserver<Message<AutocompleteIngredient[]>>
+{
     private readonly _controller: IngredientFormController;
     private readonly _autocomplete: Autocomplete;
     private readonly _acOptions: Options;
@@ -38,8 +41,15 @@ export class IngredientFormView implements IObserver<AutocompleteIngredient[]> {
         form.addEventListener("submit", this._onSubmit.bind(this));
     }
 
-    public update(message: AutocompleteIngredient[]): void {
-        this._autocomplete.data = message;
+    public update(message: Message<AutocompleteIngredient[]>): void {
+        if (message.data) {
+            this._autocomplete.data = message.data;
+        }
+
+        for (const alert of message.alerts) {
+            // TODO: display alerts.
+            console.error(alert.message);
+        }
     }
 
     private _onSubmit(event: Event) {
@@ -63,7 +73,9 @@ export class IngredientFormView implements IObserver<AutocompleteIngredient[]> {
     }
 }
 
-export class SelectedIngredientsView implements IObserver<SelectionsDiff> {
+export class SelectedIngredientsView
+    implements IObserver<Message<SelectionsDiff>>
+{
     private readonly _controller: SelectedIngredientsController;
     private readonly _elements: Map<string, Element> = new Map();
 
@@ -85,13 +97,20 @@ export class SelectedIngredientsView implements IObserver<SelectionsDiff> {
         form.addEventListener("reset", controller.onReset.bind(controller));
     }
 
-    public update(diff: SelectionsDiff): void {
-        for (const ingredient of diff.deleted) {
-            this._delete(ingredient);
+    public update(message: Message<SelectionsDiff>): void {
+        if (message.data) {
+            for (const ingredient of message.data.deleted) {
+                this._delete(ingredient);
+            }
+
+            for (const ingredient of message.data.added) {
+                this._add(ingredient);
+            }
         }
 
-        for (const ingredient of diff.added) {
-            this._add(ingredient);
+        for (const alert of message.alerts) {
+            // TODO: display alerts.
+            console.error(alert.message);
         }
     }
 

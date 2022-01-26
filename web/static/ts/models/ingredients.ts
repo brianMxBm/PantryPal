@@ -1,26 +1,23 @@
-import {BaseObservable} from "../observe";
 import {KeyError} from "../errors";
-import {Alert, ErrorAlert, WarningAlert} from "../alerts";
+import {ErrorAlert, WarningAlert} from "../alerts";
 import {Client} from "../api";
 import {AutocompleteIngredient} from "./spoonacular";
+import {AlertingObservable, APIObservable, Message} from "../observe";
 
 export class SelectionsDiff {
     public readonly added: AutocompleteIngredient[];
     public readonly deleted: AutocompleteIngredient[];
-    public readonly alerts: Alert[];
 
     constructor(diff: {
         added?: AutocompleteIngredient[];
         deleted?: AutocompleteIngredient[];
-        alerts?: Alert[];
     }) {
         this.added = diff.added ?? [];
         this.deleted = diff.deleted ?? [];
-        this.alerts = diff.alerts ?? [];
     }
 }
 
-export class SelectedIngredients extends BaseObservable<SelectionsDiff> {
+export class SelectedIngredients extends AlertingObservable<SelectionsDiff> {
     public lastSelection?: AutocompleteIngredient = undefined;
     private _ingredients: Map<string, AutocompleteIngredient>;
 
@@ -38,10 +35,10 @@ export class SelectedIngredients extends BaseObservable<SelectionsDiff> {
             const alert = new WarningAlert(
                 `Ingredient '${ingredient.name}' was already selected.`
             );
-            this.notify(new SelectionsDiff({alerts: [alert]}));
+            this.notify({alerts: [alert]});
         } else {
             this._ingredients.set(ingredient.name, ingredient);
-            this.notify(new SelectionsDiff({added: [ingredient]}));
+            this.notify({data: new SelectionsDiff({added: [ingredient]})});
         }
     }
 
@@ -52,7 +49,7 @@ export class SelectedIngredients extends BaseObservable<SelectionsDiff> {
         }
 
         this._ingredients.delete(name);
-        this.notify(new SelectionsDiff({deleted: [ingredient]}));
+        this.notify({data: new SelectionsDiff({deleted: [ingredient]})});
     }
 
     addSelection(input: string): void {
@@ -66,24 +63,22 @@ export class SelectedIngredients extends BaseObservable<SelectionsDiff> {
             const alert = new ErrorAlert(
                 "A selection must be made from autocompletion."
             );
-            this.notify(new SelectionsDiff({alerts: [alert]}));
+            this.notify({alerts: [alert]});
         } else {
             this.add(this.lastSelection);
         }
     }
 
     clear(): void {
-        this.notify(
-            new SelectionsDiff({
-                deleted: Array.from(this._ingredients.values()),
-            })
-        );
+        const deleted = Array.from(this._ingredients.values());
+        const diff = new SelectionsDiff({deleted: deleted});
+        this.notify({data: diff});
         this._ingredients.clear();
     }
 }
 
-export class IngredientForm extends BaseObservable<AutocompleteIngredient[]> {
-    private readonly _api: Client;
+export class IngredientForm extends APIObservable<AutocompleteIngredient[]> {
+    protected readonly _api: Client;
     private _data: AutocompleteIngredient[] = [];
 
     constructor(apiClient: Client) {
@@ -97,16 +92,26 @@ export class IngredientForm extends BaseObservable<AutocompleteIngredient[]> {
 
     set data(value: AutocompleteIngredient[]) {
         this._data = value;
-        this.notify(this._data);
+        const msg = new Message<AutocompleteIngredient[]>({data: value});
+        this.notify(msg);
     }
 
     public async update(query: string): Promise<void> {
+        if (!query) {
+            // Do nothing for empty inputs.
+            return;
+        }
+
         const params = {
             query: query,
             number: 100,
         };
 
-        const response = await this._api.get("ingredients", params);
-        this.data = await response.json();
+        try {
+            const response = await this._api.get("ingredients", params);
+            this.data = await response.json();
+        } catch (e) {
+            this._notifyResponseError(e);
+        }
     }
 }

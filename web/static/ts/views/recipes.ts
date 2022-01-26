@@ -1,9 +1,9 @@
 import {IObserver} from "../observe";
 import {Recipe} from "../models/spoonacular";
 import {RecipesController} from "../controllers/recipes";
-import {RecipesMessage} from "../models/recipes";
+import {Message} from "../observe";
 
-export class RecipesView implements IObserver<RecipesMessage> {
+export class RecipesView implements IObserver<Message<Recipe[]>> {
     private readonly _controller: RecipesController;
     private readonly _template: HTMLElement;
     private readonly _parent: HTMLElement;
@@ -35,16 +35,17 @@ export class RecipesView implements IObserver<RecipesMessage> {
         );
     }
 
-    public update(message: RecipesMessage): void {
-        if (message.recipes) {
+    public update(message: Message<Recipe[]>): void {
+        if (message.data) {
             this._clear();
-            for (const recipe of message.recipes) {
+            for (const recipe of message.data) {
                 this._createElement(recipe);
             }
         }
 
         for (const alert of message.alerts) {
             // TODO: display alerts.
+            console.error(alert.message);
         }
     }
 
